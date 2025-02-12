@@ -1,0 +1,38 @@
+<% post.comments.forEach(comment => { %>
+    <div class="comment-container" data-comment-id="<%= comment.id %>" data-user-id="<%= user ? user.id : '' %>"> 
+        <div class="comment-author-section comment-section"> </div>
+        <div class="comment-content-section comment-section"> <%- comment.getContent() %> </div> 
+
+        <div class="comment-feedback-section comment-section">
+            <div class="comment-likes-container"> 
+                <% if (comment.hasLiked) { %> 
+                    <i class="fa-solid fa-thumbs-up comment-like-icon" style='color: blue;'></i>
+                <% } else { %> 
+                    <i class="fa-solid fa-thumbs-up comment-like-icon"></i> 
+                <% } %> 
+                <p> <%= comment.likes %> </p> 
+            </div>
+        </div> 
+
+        <% if (user) {
+            if (user.id == comment.user.id) { %>
+                <div class="comment-dropdown-container">
+    
+                    <i class="fa-solid fa-ellipsis comment-dropdown-toggler"></i>
+                    
+                    <div class="comment-dropdown">
+                        <% if (user) { %>
+                            <p class="edit-comment-btn">Edit comment</p>
+                            <p class="delete-comment-btn">Delete comment</p>
+                        <% } else { %>
+                            <p style="color: red;">Report comment</p>
+                        <% } %>
+                    </div>
+            
+                </div>
+            <% } 
+        } %>
+        
+    </div> 
+
+<% }) %>

@@ -1,0 +1,73 @@
+<%- include('./head.ejs', {
+    title: 'profile', 
+    cssFiles: ['profile.css', 'header.css'], 
+    jsDependencies: {
+        tinyMCE: true,
+        fontawesome: true
+    }
+}) %>
+<body data-user-id="<%= user.id %>">
+    <%- include('header.ejs', {user, viewname: 'profile'}) %>
+
+    <div id="container">
+
+        <section id="posts-section">
+
+            <h1 id="title"> <%= user.name %> </h1>
+
+            <div id="posts-container">
+                <%- include('./my-posts', {
+                    posts: user.posts
+                } ) %>
+            </div>
+
+        </section>
+
+        <section id="profile-section">
+            <img src="<%= user.imagePath %>" alt="" id="profile-img">
+            <h3 id="profile-name"><%= user.name %></h3>
+            <p id="user-bio"><%= user.bio %></p>
+
+            <br>
+
+            <p id="show-profile-settings-modal-btn">Edit</p>
+
+        </section>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div id="profile-settings-modal">
+        <section id="profile-photo-section">
+            <img src="<%= user.imagePath %>" alt="" id="profile-settings-user-img">
+
+            <input type="file" accept="image/*" id="profile-photo-input">
+
+            <button id="open-profile-photo-input-btn">Update</button>
+
+            <button id="remove-profile-photo">remove</button>
+        </section>
+
+        <section id="user-info-section">
+            <div id="name-container">
+                <input type="text" value="<%= user.name %>" id="profile-settings-name-input">
+            </div>
+
+            <div id="bio-container">
+                <input type="text" value="<%= user.bio %>" id="profile-settings-bio-input">
+            </div>
+
+        </section>
+
+        <div id="profile-settings-btns">
+            <button id="close-profile-settings-modal-btn">Cancel</button>
+            <button id="save-profile-changes-btn">Save</button>
+        </div>
+    </div>
+
+    <script src="/js/header.js"></script>
+
+    <script src="/js/profile.js"></script>
+    
+</body>
+</html>

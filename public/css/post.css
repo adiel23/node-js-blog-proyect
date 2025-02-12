@@ -1,0 +1,115 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+section {
+    padding: 10px;
+    margin: auto;
+    max-width: 500px;
+}
+
+/* post-section */
+
+
+#post-stats {
+    display: flex;
+    gap: 20px;
+}
+
+#post-stats div {
+    display: flex;
+    gap: 5px;
+}
+
+#post-stats i, #post-stats p {
+    cursor: pointer;
+}
+
+#post-img {
+    width: 100%;
+}
+
+/* en caso de que el usuario este autenticado */
+
+#comment-textarea {
+    width: 100%;
+}
+
+#comment-textarea.disabled {
+    cursor: pointer;
+}
+
+.comment-container {
+    position: relative;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-bottom: 1px solid black;
+}
+
+.comment-dropdown-container {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.comment-dropdown-toggler {
+    cursor: pointer;
+}
+
+.comment-dropdown {
+    position: absolute;
+    right: 0;
+    display: none;
+    width: max-content;
+    border: 1px solid lightgray;
+    padding: 5px;
+}
+
+.comment-dropdown.active {
+    display: block;
+}
+
+.comment-dropdown p {
+    cursor: pointer;
+}
+
+.comment-likes-container {
+    display: flex;
+    gap: 5px;
+}
+
+.comment-like-icon {
+    cursor: pointer;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100%;
+    height: 100vh; 
+    background: white;
+    opacity: .95;
+}
+
+#comment-deletion-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    text-align: center;
+}
+
+#comment-deletion-container-btns {
+    margin-top: 20px;
+}

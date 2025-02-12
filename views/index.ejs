@@ -1,0 +1,120 @@
+<%- include('./head.ejs', {
+    title: 'home',
+    cssFiles: ['index.css', 'header.css'],
+    jsDependencies: {
+        tinyMCE: false,
+        fontawesome: true
+    }
+}) %>
+<body>
+
+    <div id="container">
+            <% if (user) { %>
+                <%- include('header.ejs', {user, viewname: 'index'}) %>
+            <% } else { %>
+                <header>
+                    <h2>THE BLOG</h2>
+                    <div id="header-btns">
+                        <button id="show-login-form-btn">Login</button>
+        
+                        <button id="show-register-form-btn">Register</button>
+                    </div>
+                </header> 
+            <% } %>
+    
+        <section id="latest-posts-section">
+            <h2 class="section-title">Latest</h2>
+            <div id="latest-posts-container">
+                <% posts.forEach(post => { %>
+                    <div class="post-container">
+
+                        <a href="/post/<%=post.id %>" class="post-link">
+                            <img src="<%= post.imagePath %>" class="post-img">
+                            <h3> <%= post.title %> </h3>
+                            <!-- <div id="post-content"> </div> -->
+                        </a>
+
+                        <div class="post-author-section">
+                            <img src="<%= post.user.imagePath %>" alt="" class="author-img">
+                            <div id="author-info">
+                                <p class="author-name"><%= post.user.name %></p>
+                                <p class="post-date"><%= post.date %></p>
+                            </div>
+
+                            <div class="author-dropdown">
+                                <div class="author-dropdown-main">
+                                    <p class="author-dropdown-name"><%= post.user.name %></p>
+                                    <img src="<%= post.user.imagePath %>" alt="" class="author-dropdown-img">
+                                </div>
+
+                                <p class="author-dropdown-bio"><%= post.user.bio %></p>
+
+                                <button class="follow-author-btn">follow</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                <% }); %>
+            </div>
+        </section>
+
+    </div>
+
+    <div id="overlay"></div>
+
+    <form id="login-form" class="login-form" method="POST" action="/user/login">
+        <h2>LOGIN</h2>
+
+        <div id="login-email-input-container">
+            <label>Your email</label>
+            <input type="text" id="login-email-input" name="email">
+        </div>
+
+        <div id="login-password-input-container">
+            <label>Your password</label>
+            <input type="text" id="login-password-input" name="password">
+        </div>
+
+        <button id="login-btn">Login</button>
+
+        <i class="fa-solid fa-x" id="close-login-form-btn"></i>
+    </form>
+
+    <form id="register-form" class="login-form" method="POST" action="/user/register" enctype="multipart/form-data">
+        <h2>REGISTER</h2>
+
+        <img src="/imgs/default-profile.png" id="img-preview">
+
+        <input type="file" name="img" id="img-input">
+
+        <div id="register-name-input-container">
+            <label>Your name</label>
+            <input type="text" id="register-name-input" name="name">
+        </div>
+
+        <div id="register-email-input-container">
+            <label>Your email</label>
+            <input type="text" id="register-email-input" name="email">
+        </div>
+
+        <div id="register-password-input-container">
+            <label>Your password </label>
+            <input type="text" id="register-password-input" name="password">
+        </div>
+
+        <button id="register-btn">Register</button>
+
+        <i class="fa-solid fa-x" id="close-register-form-btn"></i>
+    </form>
+
+    <% if (user) { %>
+        <script src="/js/header.js"></script>
+    <% } else { %>
+        <script src="/js/unlogged-users-index.js"></script>
+    <% } %>
+
+    <script src="/js/index.js"></script>
+    
+</body>
+</html>

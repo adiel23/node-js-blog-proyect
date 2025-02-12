@@ -1,0 +1,32 @@
+<header class="<%= viewname %>">
+    <h2>THE BLOG</h2>
+    <div id="header-options">
+        <div id="search-container">
+            <i class="fa-solid fa-magnifying-glass" id="search-icon"></i>
+            <input type="text" id="search-input" placeholder="search...">
+        </div>
+
+        <div id="profile-dropdown-container">
+            <img src="<%= user.imagePath %>" id="profile-dropdown-toggler">
+
+            <div id="profile-dropdown">
+                <div class="dropdown-section" id="profile-dropdown-section">
+                    <img src="<%= user.imagePath %>" alt="">
+                    <h3> <%= user.name %></h3>
+                </div>
+                <div class="dropdown-section">
+                    <a href="/post/new">Write</a>
+                </div>
+                <div class="dropdown-section">
+                    <a href="/user/profile">Profile</a>
+                </div>
+                <div class="dropdown-section">
+                    <a href="">Settings</a>
+                </div>
+                <div class="dropdown-section">
+                    <a href="/user/log-out" id="log-out-link">Log out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

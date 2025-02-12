@@ -1,0 +1,98 @@
+<%- include('./head.ejs', {
+    title: 'post', 
+    cssFiles: ['post.css', 'header.css'], 
+    jsDependencies: {
+        tinyMCE: true,
+        fontawesome: true
+    }
+}) %>
+<body>
+    <% if (user) { %>
+        <%- include('header.ejs', {user, viewname: 'post'}) %>
+    <% } else { %>
+        <header>
+            <h2>THE BLOG</h2>
+            <div id="header-btns">
+                <button id="show-login-form-btn">Login</button>
+
+                <button id="show-register-form-btn">Register</button>
+            </div>
+        </header> 
+    <% } %>
+
+    <section id="post-section" data-post-content="<%= post.content %>" data-post="<%= JSON.stringify(post)%>" data-post-id="<%= post.id %>" data-user-id="<%= user ? user.id : '' %>">
+        <h1 id="post-title"><%= post.title %></h1>
+        <div id="post-author">
+
+        </div>
+        <div id="post-stats">
+
+            <div id="post-claps">
+                <% if (post.hasClapped) { %>
+                    <i class="fa-solid fa-hands-clapping" id="claps-icon" style="color: blue;"></i>
+                <% } else { %>
+                    <i class="fa-solid fa-hands-clapping" id="claps-icon"></i>
+                <% } %>
+                <p id="claps-counter"><%= post.claps %></p>
+            </div>
+
+            <div id="post-comments">
+                <i class="fa-regular fa-comment"></i>
+                <p id="comments-counter"><%= post.getCommentsNumber() %></p>
+            </div>
+    
+        </div>
+        <img id="post-img" src="<%= post.imagePath %>">
+        <div id="post-content">
+            <%- post.content %>
+        </div>
+    </section>
+
+    <section id="comments-section">
+        <h2 class="section-title" id="comments-section-title">Comments (<%= post.getCommentsNumber()%>)</h2>
+
+        <div id="comment-textarea-container">
+
+            <% if (user) { %>
+                <textarea id="comment-textarea"></textarea>
+            <% } else { %>
+                <textarea id="comment-textarea" class="disabled"></textarea>
+            <% } %>
+
+            <div id="comment-btns-container">
+                <button id="cancel-comment-btn">
+                    Cancel
+                </button>
+                <button id="add-comment-btn" disabled>
+                    Respond
+                </button>
+            </div>
+
+        </div>
+
+        <div id="comments-container">
+            <%- include('./_comments', {post, user}) %>
+        </div>
+    </section>
+
+    <div id="overlay">
+
+    </div>
+
+    <div id="comment-deletion-container">
+        <h2>Delete</h2>
+        <p>Deleted comments are gone forever, Are you sure</p>
+
+        <div id="comment-deletion-container-btns">
+            <button id="cancel-comment-deletion-btn">Cancel</button>
+
+            <button id="delete-comment-btn">Delete comment</button>
+        </div>
+    </div>
+    
+    <textarea name="" id="textarea"></textarea>
+
+    <script src="/js/post.js"></script>
+    
+</body>
+</html>

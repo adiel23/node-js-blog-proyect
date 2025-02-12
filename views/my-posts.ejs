@@ -1,0 +1,30 @@
+<% if (posts.length > 0) {
+    posts.forEach(post => { %>
+        <div class="post-container" data-post-id="<%= post.id %>">
+
+            <div class="post-container-top">
+                <h3><%= post.title %></h3>
+            </div>
+
+            <div class="post-container-bottom">
+                <p> <%= post.date %> </p>
+
+                <div class="post-dropdown-container">
+
+                    <i class="fa-solid fa-ellipsis post-dropdown-toggler"></i>
+
+                    <div class="post-dropdown">
+                        <p class="remove-post-btn" data-post-id="<%= post.id %>">Remove Post</p>
+                        <a class="edit-post-btn" href="/post/<%= post.id %>/edit">
+                            Edit Post
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+    <% }) 
+} else { %>
+    <p>No tienes ningun post. Publica algo</p>
+<% } %>

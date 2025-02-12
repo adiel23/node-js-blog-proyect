@@ -1,0 +1,103 @@
+header {
+    padding: 20px;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+header.search-results {
+    justify-content: unset;
+}
+
+/* para los usuarios registrados. */
+
+#header-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+header.search-results #header-options {
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+#search-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#search-icon {
+    cursor: pointer;
+}
+
+#search-input {
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+    outline: none;
+    border: none;
+    transition: width 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.3s;
+}
+
+#search-input.active {
+    visibility: visible;
+    width: 100px;
+    opacity: 1;
+    transition: width 0.5s ease, opacity 0.5s ease, visibility 0s;
+}
+
+#profile-dropdown-container {
+    position: relative;
+}
+
+#profile-dropdown-toggler {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#profile-dropdown {
+    position: absolute;
+    z-index: 50;
+    top: 100%;
+    left: 50%;
+    transform: translateX(50%);
+    display: none;
+    width: 200px;
+    background: white;
+    box-shadow: 0 0 10px 5px grey;
+}
+
+#profile-dropdown.active {
+    display: block;
+}
+
+.dropdown-section {
+    padding: 20px;
+    border-bottom: 1px solid grey;
+}
+
+.dropdown-section a {
+    text-decoration: none;
+    color: rgb(72, 70, 70);
+    cursor: pointer;
+}
+
+.dropdown-section:last-child {
+    border-bottom: none;
+}
+
+#profile-dropdown-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#profile-dropdown-section img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}

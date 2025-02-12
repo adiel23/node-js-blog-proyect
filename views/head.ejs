@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> </title>
+    <% if (jsDependencies) {
+        if (jsDependencies.tinyMCE) { %>
+            <script src="https://cdn.tiny.cloud/1/enrteq6x3ds1kv4osslbchtctedbk6jt6kzzc0bea052kqut/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+        <% } 
+        if (jsDependencies.fontawesome) { %>
+            <script src="https://kit.fontawesome.com/7792cd81ab.js" crossorigin="anonymous"></script>
+        <% }
+    } 
+
+    if (cssFiles) {
+        cssFiles.forEach(file => { %>
+            <link rel="stylesheet" href="/css/<%= file %>">
+        <% })
+    }
+    
+    %>
+</head>

@@ -1,0 +1,35 @@
+<%- include('./head.ejs', {
+    title: 'post', 
+    cssFiles: ['post-editor.css', 'header.css'],
+    jsDependencies: {
+        tinyMCE: true,
+        fontawesome: false
+    }
+}) %>
+<body>
+    <%- include('header.ejs', {user, viewname: 'post-editor'}) %>
+    
+    <div id="container">
+        <h2 id="title"> <%= post ? 'edit your post' : 'add a post' %> </h2>
+
+        <form id="create-post-form" action="<%= post ? `/post/${post.id}/update?_method=PATCH` : '/post/new' %>" method="post" enctype="multipart/form-data">
+
+            <img src="<%= post ? post.imagePath : '/imgs/image-icon.png' %>">
+
+            <input type="file" name="img">
+
+            <input type="text" id="title-input" name="title" value="<%= post ? post.title : '' %>" placeholder="TITLE">
+
+            <textarea id="textarea" id="content-textarea" name="content">
+                <%= post ? post.content : '' %>
+            </textarea>
+
+            <button type="submit"><%= post ? 'update post' : 'create post' %></button>
+        </form>
+    </div>
+
+    <script src="/js/header.js"></script>
+    <script src="/js/post-editor.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<%- include('./head.ejs', {
+    title: 'search-results',
+    cssFiles: ['search-results.css', 'header.css'],
+    jsDependencies: {
+        tinyMCE: false,
+        fontawesome: true
+    }
+}) %>
+<body>
+    <%- include('header.ejs', {user, viewname: 'search-results'}) %>
+
+    <div id="container">
+        <section id="posts-section">
+            <h2 id="posts-section-title"> Results for <%= query %> </h2>
+
+            <div id="posts-container">
+                <% if (posts.length > 0) {
+                    posts.forEach(post => { %>
+                        <div class="post-container" data-post-id="<%= post.id %>">
+                            
+                            <div class="post-author-section">
+                                <p><%= post.user.name %></p>
+                            </div>
+
+                            <div class="post-content-section">
+                                <div class="post-content-section-left">
+                                    <h3><%= post.title %></h3>
+                                </div>
+                                <div class="post-content-section-right">
+                                    <img src="<%= post.imagePath %>" alt="una imagen" class="post-img">
+                                </div>
+                            </div>
+                            
+                            <div class="post-feedback-section">
+                                <p><%= post.date %></p>
+
+                                <div class="post-claps-container">
+                                    <i class="fa-solid fa-hands-clapping"></i>
+                                    <p><%= post.claps %></p>
+                                </div>
+                                
+                                <div class="post-comments-container">
+                                    <i class="fa-solid fa-comment"></i>
+                                    <p><%= post.getCommentsNumber() %> </p>
+                                </div>
+                
+                            </div>
+                        </div>
+                    <% });
+                } else { %>
+                    <p>No hay resultados</p>
+                <% } %>
+            </div>
+        </section>
+        <aside>
+            <h3>Topics matching <%= query %> </h3>
+        </aside>
+    </div>
+
+    <script src="/js/header.js"></script>
+
+    <script src="/js/search-results.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+#container {
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* para los usuarios no registrados */
+
+button {
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.section-title {
+    margin-bottom: 20px;
+}
+
+#latest-posts-section {
+    padding: 20px;
+}
+
+#latest-posts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.post-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.post-link {
+    text-decoration: none;
+    color: unset;
+}
+
+.post-img {
+    width: 100%;
+    height: 180px;
+    border: 1px solid grey;
+}
+
+.post-author-section {
+    padding: 10px 0;
+    position: relative; /* para posicionar al author dropdown */
+    display: flex;
+    gap: 10px;
+}
+
+.author-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+/* author dropdown */
+
+.author-dropdown {
+    position: absolute;
+    z-index: 100;
+    background: white;
+    border: 1px solid grey;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.author-dropdown::before, .author-dropdown::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-style: solid;
+}
+
+.author-dropdown.up::before {
+    bottom: -24px; /* Ajusta la posición de la flecha */
+    border-width: 12px;
+    border-color: black transparent transparent transparent;
+}
+
+.author-dropdown.up::after {
+    bottom: -20px; /* Ajusta la posición de la flecha */
+    border-width: 10px;
+    border-color: white transparent transparent transparent;
+}
+
+.author-dropdown.down::before {
+    top: -24px; /* Ajusta la posición de la flecha */
+    border-width: 12px;
+    border-color: transparent transparent black transparent;
+}
+
+.author-dropdown.down::after {
+    top: -20px; /* Ajusta la posición de la flecha */
+    border-width: 10px;
+    border-color: transparent transparent white transparent;
+}
+
+.author-dropdown-main {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.author-dropdown-name {
+    font-weight: bold;
+    text-wrap: nowrap;
+}
+
+.author-dropdown-bio {
+    margin-bottom: 10px;
+}
+
+.author-dropdown-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+/* vamos con las ventanas modales */
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: lightgray;
+    opacity: .6;
+    display: none;
+}
+
+.login-form {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    display: none;
+}
+
+.login-form div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-form button {
+    background: rgb(31, 31, 31);
+    color: white;
+}
+
+.login-form button:hover {
+    background: black;
+}
+
+.login-form i {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    cursor: pointer;
+}
+
+#img-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+input:not(#img-input) {
+    padding: 10px;
+    background: lightgray;
+    text-align: center;
+    border: none;
+}
+
+input:not(#img-input).active {
+    background: white;
+}
+    
