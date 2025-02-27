@@ -1,0 +1,88 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#container {
+    display: flex;
+    gap: 100px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+#options {
+    display: flex;
+    gap: 10px;
+    padding: 20px 0;
+    border-bottom: 1px solid lightgrey;
+}
+
+#main {
+    flex-grow: 1;
+}
+
+#author-name {
+    font-size: 3rem;
+}
+
+.post-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid lightgrey;
+    cursor: pointer;
+}
+
+.post-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.post-info-container-bottom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-claps-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.post-img {
+    height: 100px;
+}
+
+/* veamos el aside */
+
+aside {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    padding: 40px;
+    border-left: 1px solid lightgrey;
+}
+
+#author-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+#author-profile-btns button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    background: rgb(2, 159, 2);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#author-profile-btns button:hover {
+    background: green;
+}

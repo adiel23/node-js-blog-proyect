@@ -11,15 +11,92 @@ body.no-scroll {
 section {
     padding: 10px;
     margin: auto;
-    max-width: 500px;
+    max-width: 600px;
 }
 
 /* post-section */
 
+#post-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#post-title {
+    font-size: 3rem;
+}
+
+/* post-author */
+
+#post-author-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#post-author-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#post-author-info {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+#post-author-name, #post-follow-author-btn {
+    cursor: pointer;
+}
+
+#post-author-name:hover {
+    text-decoration: underline;
+}
+
+#post-follow-author-btn {
+    color: green;
+}
+
+#post-follow-author-btn:hover {
+    color: rgb(9, 108, 9);
+}
+
+#post-author-dropdown {
+    position: absolute;
+    display: none;
+    width: 300px;
+    padding: 20px;
+    box-shadow: 0 0 5px 5px grey;
+    background: white;
+}
+
+#post-author-dropdown-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+#post-author-dropdown-follow-btn {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: rgb(36, 36, 36);
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+}
+
+/* post-stats */
 
 #post-stats {
     display: flex;
     gap: 20px;
+    padding: 10px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
 #post-stats div {
@@ -35,13 +112,66 @@ section {
     width: 100%;
 }
 
+#post-content {
+    font-size: 1.3rem;
+}
+
+/* dividing line */
+
+#dividing-line {
+    width: 100%;
+    height: 1px;
+    background: black;
+    margin: 60px 0;
+}
+
+/* comments-section */
+
+#comments-section {
+    padding-bottom: 80px;
+}
+
 /* en caso de que el usuario este autenticado */
 
 #comment-textarea {
     width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-top: 20px;
+    border: none;
+    outline: none;
+    box-shadow: 0px 0px 5px 1px grey;
+    transition: height .5s ease;
 }
 
 #comment-textarea.disabled {
+    cursor: pointer;
+}
+
+#comment-btns-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#comment-btns-container button {
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#cancel-comment-btn {
+    display: none;
+}
+
+#add-comment-btn {
+    background: green;
+    color: white;
+    opacity: 0.5;
+}
+
+#add-comment-btn.enabled {
+    opacity: 1;
     cursor: pointer;
 }
 
@@ -52,6 +182,37 @@ section {
     flex-direction: column;
     gap: 10px;
     border-bottom: 1px solid black;
+}
+
+.comment-author-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-author-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.comment-author-name {
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+}
+
+.comment-author-name:hover {
+    text-decoration: underline;
+}
+
+.comment-author-dropdown {
+    position: absolute;
+    background: white;
+    border: 1px solid black;
+    padding: 10px;
+    display: none;
 }
 
 .comment-dropdown-container {
@@ -69,7 +230,8 @@ section {
     right: 0;
     display: none;
     width: max-content;
-    border: 1px solid lightgray;
+    background: white;
+    box-shadow: 0 0 5px 5px grey;
     padding: 5px;
 }
 

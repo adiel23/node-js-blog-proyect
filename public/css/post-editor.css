@@ -22,13 +22,36 @@ img {
     height: 200px;
 }
 
+#image-input {
+    display: none;
+}
+
 #title-input {
-    font-size: 30px;
+    font-size: 50px;
     border: none;
     outline: none;
 }
 
-#content-textarea {
-    height: 300px;
+#textarea {
+    height: unset;
+    border: none;
+    outline: none;
+    font-size: 20px;
+}
+
+#confirm-post-btn {
+    padding: 10px;
+    border-radius: 20px;
+    background: rgb(7, 155, 7);
+    color: white;
+    width: 90px;
+    cursor: pointer;
+    pointer-events: none;
+    opacity: .5;
+}
+
+#confirm-post-btn.enabled {
+    pointer-events: all;
+    opacity: 1;
 }
 

@@ -1,6 +1,23 @@
 <% post.comments.forEach(comment => { %>
     <div class="comment-container" data-comment-id="<%= comment.id %>" data-user-id="<%= user ? user.id : '' %>"> 
-        <div class="comment-author-section comment-section"> </div>
+
+        <div class="comment-author-section comment-section"> 
+
+            <div class="comment-author-section-left">
+                <img src="<%= comment.user.imagePath %>" alt="image" class="comment-author-img">
+            </div>
+            
+            <div class="comment-author-section-right">
+                <a class="comment-author-name" href="/author/<%=comment.user.id%>"><%= comment.user.name %></a>
+                <p class="comment-date"><%= comment.date %></p>
+            </div>
+
+            <div class="comment-author-dropdown">
+                <p>XDDD</p>
+            </div>
+
+        </div>
+
         <div class="comment-content-section comment-section"> <%- comment.getContent() %> </div> 
 
         <div class="comment-feedback-section comment-section">

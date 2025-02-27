@@ -22,9 +22,29 @@
 
     <section id="post-section" data-post-content="<%= post.content %>" data-post="<%= JSON.stringify(post)%>" data-post-id="<%= post.id %>" data-user-id="<%= user ? user.id : '' %>">
         <h1 id="post-title"><%= post.title %></h1>
-        <div id="post-author">
 
+        <div id="post-author-section">
+            <div id="post-author-section-left">
+                <img src="<%= post.user.imagePath %>" alt="" id="post-author-img">
+            </div>
+
+            <div id="post-author-section-right">
+                <div id="post-author-info">
+                    <h3 id="post-author-name"><%= post.user.name %> </h3>
+                    <p id="post-follow-author-btn">Follow</p>
+                </div>
+                <p id="post-date"><%= post.date %></p>
+            </div>
+
+            <div id="post-author-dropdown">
+                <img src="<%= post.user.imagePath %>" alt="" id="post-author-dropdown-img">
+                <h3 id="post-author-dropdown-name"><%= post.user.name %></h3>
+                <p id="post-author-dropdown-followers">0</p>
+                <p id="post-author-dropdown-bio"><%= post.user.bio %></p>
+                <button id="post-author-dropdown-follow-btn">follow</button>
+            </div>
         </div>
+
         <div id="post-stats">
 
             <div id="post-claps">
@@ -48,15 +68,17 @@
         </div>
     </section>
 
+    <div id="dividing-line"></div>
+
     <section id="comments-section">
         <h2 class="section-title" id="comments-section-title">Comments (<%= post.getCommentsNumber()%>)</h2>
 
         <div id="comment-textarea-container">
 
             <% if (user) { %>
-                <textarea id="comment-textarea"></textarea>
+                <textarea id="comment-textarea" placeholder="What are your thoughts?"></textarea>
             <% } else { %>
-                <textarea id="comment-textarea" class="disabled"></textarea>
+                <textarea id="comment-textarea" class="disabled" placeholder="What are your thoughts?" rows="1"></textarea>
             <% } %>
 
             <div id="comment-btns-container">
@@ -89,9 +111,13 @@
             <button id="delete-comment-btn">Delete comment</button>
         </div>
     </div>
-    
-    <textarea name="" id="textarea"></textarea>
 
+    <% if (user) { %>
+        <script src="/js/header.js"></script>
+    <% } else { %>
+        <script src="/js/unlogged-users-index.js"></script>
+    <% } %> 
+    
     <script src="/js/post.js"></script>
     
 </body>

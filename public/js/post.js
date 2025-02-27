@@ -4,13 +4,26 @@ const postId = postSection.getAttribute('data-post-id');
 const userId = postSection.getAttribute('data-user-id');
 const postContent = postSection.getAttribute('data-post-content');
 
-const textarea = document.getElementById('textarea');
+// vamos con la parte del dropdown 
 
-textarea.addEventListener('input', () => {
-    console.log(JSON.stringify(textarea.value));
+let isMouseOverPostAuthorName = false;
+let isMouseOverPostAuthorDropdown = false;
+
+const postAuthorName = document.getElementById('post-author-name');
+
+const postAuthorDropdown = document.getElementById("post-author-dropdown");
+
+postAuthorName.addEventListener('mouseover', () => {
+    postAuthorDropdown.style.display = 'block';
 })
 
-console.log(postContent);
+
+
+
+
+
+
+let isCommentTextareaActive = false;
 
 // post stats:
 
@@ -65,14 +78,22 @@ const addCommentBtn = document.getElementById('add-comment-btn');
 const commentsContainer = document.getElementById('comments-container');
 
 commentTextarea.addEventListener('click', () => {
-    validateUser(() => {});
+    validateUser(() => {
+        if (!isCommentTextareaActive) {
+            commentTextarea.style.height = '100px';
+
+            cancelCommentBtn.style.display = 'block';
+        }
+    });
 });
 
 commentTextarea.addEventListener('input', () => {
     if (commentTextarea.value) {
         addCommentBtn.disabled = false;
+        addCommentBtn.classList.add('enabled');
     } else {
         addCommentBtn.disabled = true;
+        addCommentBtn.classList.remove('enabled');
     }
 });
 
@@ -96,6 +117,14 @@ addCommentBtn.addEventListener('click', () => {
         };
     });
 });
+
+cancelCommentBtn.addEventListener('click', () => {
+    commentTextarea.style.height = '40px';
+    commentTextarea.value = '';
+    cancelCommentBtn.style.display = 'none';
+    addCommentBtn.disabled = true;
+    addCommentBtn.classList.remove('enabled');
+})
 
 // ahora vamos a hacer lo de los likes de los comentarios.
 
@@ -249,7 +278,7 @@ const validateUser = (callback) => {
     if (userId) {
         callback()
     } else {
-        window.location.href = '/user/login';
+        window.location.href = '/';
     }
 }
 
@@ -269,4 +298,3 @@ function hideCommentDeletionContainer() {
     commentDeletionContainer.style.display = 'none';
     document.body.classList.remove('no-scroll');
 }
-

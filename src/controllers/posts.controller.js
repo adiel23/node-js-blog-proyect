@@ -36,10 +36,16 @@ export const createPost = (req, res) => {
 
     console.log('contenido del post: ' + content);
     console.log('longitud del contenido ' + content.length);
+
+    let imagePath;
     
     const file = req.file;
 
-    const imagePath = `/uploads/${file.filename}`;
+    if (file) {
+        imagePath = `/uploads/${file.filename}`;
+    } else {
+        imagePath = '/imgs/default-profile.png';
+    }
 
     (async () => {
         try {

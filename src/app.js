@@ -6,6 +6,7 @@ import { getUserWithoutPosts, Post } from './modules/clases.js';
 import {connectToDatabase} from './config/sqlConfig.js';
 import postRoutes from './routes/post.routes.js';
 import userRoutes from './routes/user.routes.js';
+import authorRoutes from './routes/author.routes.js';
 import { fileURLToPath } from 'url';
 
 const app = express();
@@ -97,6 +98,8 @@ app.get('/', async (req, res) => {
 app.use('/post', postRoutes);
 
 app.use('/user', userRoutes);
+
+app.use('/author', authorRoutes);
 
 app.listen(3000, () => {
     console.log('server running on port 3000');

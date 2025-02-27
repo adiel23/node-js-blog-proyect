@@ -1,4 +1,7 @@
-console.log('xd')
+console.log('xd');
+
+let isMouseOverDropdown = false;
+let isMouseOverAuthorName = false;
 
 const p = document.getElementById('xd');
 
@@ -6,43 +9,40 @@ const postAuthorSections = document.querySelectorAll('.post-author-section');
 
 if (postAuthorSections.length > 0) {
     postAuthorSections.forEach(section => {
+        const authorImg = section.querySelector('.author-img');
+        const authorName = section.querySelector('.author-name');
         const dropdown = section.querySelector('.author-dropdown');
 
-        section.addEventListener('mouseenter', () => {
-            
+        authorName.addEventListener('mouseover', () => {
+            console.log('estas haciendo over sobre authorName');
+            isMouseOverAuthorName = true;
             dropdown.style.display = 'block';
-
-            const sectionRect = section.getBoundingClientRect();
-
-            const dropdownRect = dropdown.getBoundingClientRect();
-
-            if (sectionRect.top > dropdownRect.height + 70) {
-
-                // p.textContent = 'el dropdown tiene espacio para mostrarse arriba asi que se mostrara arriba'
-                
-                dropdown.style.top = `-${dropdownRect.height}px`;
-
-                dropdown.classList.add('up');
-
-            } else {
-                // p.textContent = 'el dropdown no tiene espacio para mostrarse arriba asi que se mostrara abajo.'
-
-                dropdown.style.top = '56px';
-
-                dropdown.classList.add('down');
-            }
-
         });
 
-        section.addEventListener('mouseleave', () => {
-            dropdown.style.display = 'none';
-            
-            if (dropdown.classList.contains('up')) {
-                dropdown.classList.remove('up');
-            } else {
-                dropdown.classList.remove('down');
-            }
+        authorName.addEventListener('mouseout', () => {
+            console.log("has dejado de hacer over sobre authorName");
+            isMouseOverAuthorName = false;
+            setTimeout(() => {
+                if (!isMouseOverDropdown) {
+                    dropdown.style.display = 'none';
+                };
+            }, 100);
         });
 
-    })
-}
+        dropdown.addEventListener("mouseenter", () => {
+            console.log('estas haciendo over sobre el dropdown');
+            isMouseOverDropdown = true;
+        });
+
+        dropdown.addEventListener('mouseleave', () => {
+            console.log('has dejado de hacer over sobre el dropdown');
+            isMouseOverDropdown = false;
+            setTimeout(() => {
+                if (!isMouseOverAuthorName) {
+                    dropdown.style.display = 'none';
+                };
+            }, 100);
+        });
+
+    });
+};

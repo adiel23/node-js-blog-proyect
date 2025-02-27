@@ -14,22 +14,94 @@
 
         <form id="create-post-form" action="<%= post ? `/post/${post.id}/update?_method=PATCH` : '/post/new' %>" method="post" enctype="multipart/form-data">
 
-            <img src="<%= post ? post.imagePath : '/imgs/image-icon.png' %>">
+            <img src="<%= post ? post.imagePath : '/imgs/image-icon.png' %>" id="preview-img">
 
-            <input type="file" name="img">
+            <button id="open-image-input-btn">Choose Image</button>
+
+            <input type="file" name="img" id="image-input">
 
             <input type="text" id="title-input" name="title" value="<%= post ? post.title : '' %>" placeholder="TITLE">
 
-            <textarea id="textarea" id="content-textarea" name="content">
-                <%= post ? post.content : '' %>
-            </textarea>
-
-            <button type="submit"><%= post ? 'update post' : 'create post' %></button>
+            <textarea id="textarea" name="content" placeholder="Your Story..."><% if (post) { %>
+                <%= post.content %>
+            <% } %></textarea>
+             
+            <button type="submit" id="confirm-post-btn"><%= post ? 'update post' : 'create post' %></button>
         </form>
     </div>
 
     <script src="/js/header.js"></script>
-    <script src="/js/post-editor.js"></script>
+    <!-- <script src="/js/post-editor.js"></script> -->
+
+    <script>
+
+        const previewImg = document.getElementById('preview-img');
+
+        const openImageInputBtn = document.getElementById('open-image-input-btn');
+
+        const imageInput = document.getElementById("image-input");
+
+        openImageInputBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            imageInput.click();
+        })
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            if (file) {
+                const fileReader = new FileReader();
+
+                fileReader.onload = (e) => {
+                    const imageURL = e.currentTarget.result;
+
+                    previewImg.src = imageURL;
+                }
+
+                fileReader.readAsDataURL(file);
+
+                return;
+            };
+            previewImg.src = '/imgs/default-profile.png';
+            
+        });
+
+        const titleInput = document.getElementById('title-input');
+
+        titleInput.addEventListener('input', toggleConfirmPostBtn)
+
+        const textarea = document.getElementById('textarea');
+
+        textarea.addEventListener('click', () => {
+            const value = textarea.value;
+            if (value.trim() == '') {
+                textarea.setSelectionRange(0, 0);
+            } 
+        });
+
+        textarea.addEventListener("input", function () {
+            this.style.height = "auto"; // Restablece la altura para recalcular
+
+            console.log(this.scrollHeight);
+
+            this.style.height = this.scrollHeight + "px"; // Ajusta según el contenido
+
+            toggleConfirmPostBtn();
+        });
+
+        const confirmPostBtn = document.getElementById('confirm-post-btn');
+
+        function toggleConfirmPostBtn() {
+            if (textarea.value != '' && titleInput.value != '') {
+                confirmPostBtn.classList.add('enabled');
+                return;
+            } 
+            confirmPostBtn.classList.remove('enabled');
+        }
+
+    </script>
+
+
 
 </body>
 </html>

@@ -1,0 +1,76 @@
+<%- include('./head.ejs', {
+    title: 'author-profile', 
+    cssFiles: ['author-profile.css', 'header.css'], 
+    jsDependencies: {
+        tinyMCE: true,
+        fontawesome: true
+    }
+}) %>
+<body>
+    <% if (user) { %>
+        <%- include('header.ejs', {user, viewname: 'author-profile'}) %>
+    <% } else { %>
+        <header>
+            <h2>THE BLOG</h2>
+            <div id="header-btns">
+                <button id="show-login-form-btn">Login</button>
+
+                <button id="show-register-form-btn">Register</button>
+            </div>
+        </header> 
+    <% } %>
+
+    <div id="container">
+        <div id="main">
+            <h2 id="author-name"><%= author.name %></h2>
+
+            <div id="options">
+                <p>Home</p>
+                <p>About</p>
+            </div>
+
+            <div id="posts-container">
+                <% author.posts.forEach(post => { %>
+                    <div class="post-container" data-post-id="<%= post.id %>">
+                        <div class="post-info-container">
+                            <div class="post-info-container-top">
+                                <h3 class="post-title"><%= post.title %></h3>
+                            </div>
+
+                            <div class="post-info-container-bottom">
+                                <p class="post-date"><%= post.date %></p>
+                                
+                                <div class="post-claps-container">
+                                    <i class="fa-solid fa-hands-clapping post-claps-icon"></i>
+                                    <p class="post-claps"><%= post.claps %></p>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="<%= post.imagePath %>" alt="" class="post-img">
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <aside>
+            <img src="<%= author.imagePath %>" alt="" id="author-img">
+            <h3 id="author-name"><%= author.name %></h3>
+            <p>800 followers</p>
+            <p id="author-bio"><%= author.bio %></p>
+            <div id="author-profile-btns">
+                <button id="follow-btn">follow</button>
+
+                <button id="suscribe-btn"><i class="fa-solid fa-envelope"></i></button>
+            </div>
+        </aside>
+    </div>
+
+    <% if (user) { %>
+        <script src="/js/header.js"></script>
+    <% } else { %>
+        <script src="/js/unlogged-users-index.js"></script>
+    <% } %>
+
+    <script src="/js/author-profile.js"></script>
+    
+</body>
+</html>
