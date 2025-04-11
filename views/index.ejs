@@ -6,20 +6,13 @@
         fontawesome: true
     }
 }) %>
-<body>
+<body data-user-id="<%= user ? user.id : '' %>">
 
     <div id="container">
             <% if (user) { %>
                 <%- include('header.ejs', {user, viewname: 'index'}) %>
             <% } else { %>
-                <header>
-                    <h2>THE BLOG</h2>
-                    <div id="header-btns">
-                        <button id="show-login-form-btn">Login</button>
-        
-                        <button id="show-register-form-btn">Register</button>
-                    </div>
-                </header> 
+                <%- include('unlogged-users-header.ejs') %>
             <% } %>
     
         <section id="latest-posts-section">
@@ -30,21 +23,28 @@
 
                         <a href="/post/<%=post.id %>" class="post-link">
                             <img src="<%= post.imagePath %>" class="post-img">
-                            <h3> <%= post.title %> </h3>
+                            <h3 class="post-title"> <%= post.title %> </h3>
                             <!-- <div id="post-content"> </div> -->
                         </a>
 
                         <div class="post-author-section">
-                            <img src="<%= post.user.imagePath %>" alt="" class="author-img">
+                            <a href="/author/<%= post.user.id %>">
+                                <img src="<%= post.user.imagePath %>" alt="" class="author-img">
+                            </a>
+                            
                             <div id="author-info">
-                                <p class="author-name"><%= post.user.name %></p>
+                                <a href="/author/<%= post.user.id %>" class="author-name">
+                                    <p><%= post.user.name %></p>
+                                </a> 
                                 <p class="post-date"><%= post.date %></p>
                             </div>
 
                             <div class="author-dropdown">
                                 <div class="author-dropdown-main">
-                                    <p class="author-dropdown-name"><%= post.user.name %></p>
-                                    <img src="<%= post.user.imagePath %>" alt="" class="author-dropdown-img">
+                                    <a class="author-dropdown-name" href="/author/<%=post.user.id%>"><%= post.user.name %></a>
+                                    <a href="/author/<%= post.user.id %>">
+                                        <img src="<%= post.user.imagePath %>" alt="" class="author-dropdown-img">
+                                    </a>
                                 </div>
 
                                 <p class="author-dropdown-bio"><%= post.user.bio %></p>
@@ -63,58 +63,14 @@
 
     <div id="overlay"></div>
 
-    <form id="login-form" class="login-form" method="POST" action="/user/login">
-        <h2>LOGIN</h2>
-
-        <div id="login-email-input-container">
-            <label>Your email</label>
-            <input type="text" id="login-email-input" name="email">
-        </div>
-
-        <div id="login-password-input-container">
-            <label>Your password</label>
-            <input type="text" id="login-password-input" name="password">
-        </div>
-
-        <button id="login-btn">Login</button>
-
-        <i class="fa-solid fa-x" id="close-login-form-btn"></i>
-    </form>
-
-    <form id="register-form" class="login-form" method="POST" action="/user/register" enctype="multipart/form-data">
-        <h2>REGISTER</h2>
-
-        <img src="/imgs/default-profile.png" id="img-preview">
-
-        <input type="file" name="img" id="img-input">
-
-        <div id="register-name-input-container">
-            <label>Your name</label>
-            <input type="text" id="register-name-input" name="name">
-        </div>
-
-        <div id="register-email-input-container">
-            <label>Your email</label>
-            <input type="text" id="register-email-input" name="email">
-        </div>
-
-        <div id="register-password-input-container">
-            <label>Your password </label>
-            <input type="text" id="register-password-input" name="password">
-        </div>
-
-        <button id="register-btn">Register</button>
-
-        <i class="fa-solid fa-x" id="close-register-form-btn"></i>
-    </form>
-
     <% if (user) { %>
         <script src="/js/header.js"></script>
     <% } else { %>
-        <script src="/js/unlogged-users-index.js"></script>
+        <%- include('./_login-forms.ejs') %>
+        <script src="/js/unlogged-users-header.js"></script>
     <% } %> 
 
-    <script src="/js/index.js"></script>
+    <script src="/js/index.js" type="module"></script>
     
 </body>
 </html>

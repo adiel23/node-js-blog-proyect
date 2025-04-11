@@ -48,12 +48,15 @@ export const login = (req, res) => {
                 const resultData = await pool.query`select * from users where email = ${email} and password = ${password}`;
     
                 const user = resultData.recordset[0];
-    
-                req.session.user = user;
 
-                console.log(user);
-    
-                res.redirect('/');
+                if (user) {
+                    req.session.user = user;
+                    res.status(200).send('exito');
+                } else {
+                    res.status(401).json({
+                        message: 'Usuario no encontrado'
+                    });
+                };
     
             } catch (err) {
                 console.log('error en el login: '+ err);

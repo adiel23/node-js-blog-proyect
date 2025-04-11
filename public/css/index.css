@@ -16,13 +16,6 @@ body.no-scroll {
 
 /* para los usuarios no registrados */
 
-button {
-    padding: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    border: none;
-}
-
 .section-title {
     margin-bottom: 20px;
 }
@@ -34,7 +27,7 @@ button {
 #latest-posts-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 40px 20px;
 }
 
 .post-container {
@@ -56,29 +49,36 @@ button {
     margin-bottom: 10px;
 }
 
+.post-title {
+    font-size: 1.5rem;
+}
+
 .post-author-section {
     padding: 10px 0;
     position: relative; /* para posicionar al author dropdown */
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
 .author-img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
 }
 
 .author-name {
     color: green;
+    text-decoration: none;
     font-weight: 500;
+    margin-bottom: 5px;
 }
 
 /* author dropdown */
 
 .author-dropdown {
     position: absolute;
-    bottom: 50px;
+    bottom: 60px;
     z-index: 100;
     background: white;
     border: 1px solid grey;
@@ -86,6 +86,7 @@ button {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: none;
+    cursor: default;
 }
 
 /* .author-dropdown::before, .author-dropdown::after {
@@ -111,13 +112,21 @@ button {
 .author-dropdown-main {
     display: flex;
     gap: 10px;
-    align-items: center;
+    /* align-items: center; */
 }
 
 .author-dropdown-name {
+    align-self: flex-start;
     color: rgb(10, 140, 10);
     font-weight: bold;
     text-wrap: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.author-dropdown-name:hover {
+    color: black;
+    text-decoration: underline;
 }
 
 .author-dropdown-bio {
@@ -130,9 +139,35 @@ button {
     border-radius: 50%;
 }
 
+.follow-author-btn {
+    border: 1px solid green;
+    background: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+
+
+/* prueba
+
+#test-div {
+    display: flex;
+    gap: 10px;
+}
+
+#test-p {
+    align-self: center;
+}
+
+#test-img {
+    width: 50px;
+    height: 50px;
+} */
+
 /* vamos con las ventanas modales */
 
-#overlay {
+/* #overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -198,7 +233,7 @@ button {
 
 .login-form input:not(#img-input).active {
     background: white;
-}
+} */
     
 @media screen and (max-width: 700px) {
     #latest-posts-container {

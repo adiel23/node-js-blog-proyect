@@ -47,6 +47,9 @@ inputs.forEach(input => {
     });
 });
 
+const loginEmailInput = inputs[0];
+const loginPasswordInput = inputs[1];
+
 const imgPreview = document.getElementById('img-preview');
 
 const imgInput = document.getElementById('img-input');
@@ -66,6 +69,39 @@ imgInput.addEventListener('change', async (event) => {
 
     fileReader.readAsDataURL(file);
 
+});
+
+const loginBtn = document.getElementById('login-btn');
+
+const loginErrorMessage = document.getElementById('login-error-message');
+
+loginBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (loginEmailInput.value == '' || loginPasswordInput.value == '') {
+        loginErrorMessage.textContent = 'Completa todos los campos';
+    } else {
+        const response = await fetch(`http://localhost:3000/user/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: loginEmailInput.value,
+                password: loginPasswordInput.value
+            })
+        });
+
+        if (response.ok) {
+            window.location.href = '/'
+        } else {
+            const parsedResponse = await response.json();
+            
+            loginErrorMessage.textContent = parsedResponse.message;
+        }
+    }
+
+    
 })
 
 

@@ -1,6 +1,6 @@
 <%- include('./head.ejs', {
     title: 'post', 
-    cssFiles: ['post.css', 'header.css'], 
+    cssFiles: ['header.css', 'post.css'], 
     jsDependencies: {
         tinyMCE: true,
         fontawesome: true
@@ -10,36 +10,35 @@
     <% if (user) { %>
         <%- include('header.ejs', {user, viewname: 'post'}) %>
     <% } else { %>
-        <header>
-            <h2>THE BLOG</h2>
-            <div id="header-btns">
-                <button id="show-login-form-btn">Login</button>
-
-                <button id="show-register-form-btn">Register</button>
-            </div>
-        </header> 
+        <%- include('unlogged-users-header.ejs') %>
     <% } %>
 
     <section id="post-section" data-post-content="<%= post.content %>" data-post="<%= JSON.stringify(post)%>" data-post-id="<%= post.id %>" data-user-id="<%= user ? user.id : '' %>">
-        <h1 id="post-title"><%= post.title %></h1>
+        <h1 id="post-title"> <%= post.title %></h1>
 
         <div id="post-author-section">
             <div id="post-author-section-left">
-                <img src="<%= post.user.imagePath %>" alt="" id="post-author-img">
+                <a href="/author/<%= post.user.id %>">
+                    <img src="<%= post.user.imagePath %>" alt="" id="post-author-img">
+                </a>
             </div>
 
             <div id="post-author-section-right">
                 <div id="post-author-info">
-                    <h3 id="post-author-name"><%= post.user.name %> </h3>
+                    <a id="post-author-name" href="/author/<%= post.user.id %>"><%= post.user.name %> </a>
                     <p id="post-follow-author-btn">Follow</p>
                 </div>
                 <p id="post-date"><%= post.date %></p>
             </div>
 
             <div id="post-author-dropdown">
-                <img src="<%= post.user.imagePath %>" alt="" id="post-author-dropdown-img">
-                <h3 id="post-author-dropdown-name"><%= post.user.name %></h3>
-                <p id="post-author-dropdown-followers">0</p>
+                <a href="/author/<%= post.user.id %>">
+                    <img src="<%= post.user.imagePath %>" alt="" id="post-author-dropdown-img">
+                </a>
+                <a href="/author/<%= post.user.id %>" id="post-author-dropdown-name">
+                    <h3><%= post.user.name %></h3>
+                </a>
+                <p id="post-author-dropdown-followers">0 followers</p>
                 <p id="post-author-dropdown-bio"><%= post.user.bio %></p>
                 <button id="post-author-dropdown-follow-btn">follow</button>
             </div>
@@ -60,6 +59,8 @@
                 <i class="fa-regular fa-comment"></i>
                 <p id="comments-counter"><%= post.getCommentsNumber() %></p>
             </div>
+
+            <i class="fa-regular fa-bookmark" id="save-post-btn"></i>
     
         </div>
         <img id="post-img" src="<%= post.imagePath %>">
@@ -97,10 +98,6 @@
         </div>
     </section>
 
-    <div id="overlay">
-
-    </div>
-
     <div id="comment-deletion-container">
         <h2>Delete</h2>
         <p>Deleted comments are gone forever, Are you sure</p>
@@ -112,13 +109,17 @@
         </div>
     </div>
 
+    <div id="overlay">
+    </div>
+
     <% if (user) { %>
         <script src="/js/header.js"></script>
     <% } else { %>
-        <script src="/js/unlogged-users-index.js"></script>
+        <%- include('./_login-forms.ejs') %>
+        <script src="/js/unlogged-users-header.js"></script>
     <% } %> 
     
-    <script src="/js/post.js"></script>
+    <script src="/js/post.js" type="module"></script>
     
 </body>
 </html>

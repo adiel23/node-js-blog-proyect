@@ -1,19 +1,30 @@
 <% post.comments.forEach(comment => { %>
-    <div class="comment-container" data-comment-id="<%= comment.id %>" data-user-id="<%= user ? user.id : '' %>"> 
+    <div class="comment-container" data-comment-id="<%= comment.id %>" data-user-id="<%= user ? user.id : '' %>" data-comment-author-id="<%= comment.user.id %>"> 
 
         <div class="comment-author-section comment-section"> 
 
             <div class="comment-author-section-left">
-                <img src="<%= comment.user.imagePath %>" alt="image" class="comment-author-img">
+                <a href="/author/<%= post.user.id %>">
+                    <img src="<%= comment.user.imagePath %>" alt="image" class="comment-author-img">
+                </a>
             </div>
             
             <div class="comment-author-section-right">
-                <a class="comment-author-name" href="/author/<%=comment.user.id%>"><%= comment.user.name %></a>
+                <h3 class="comment-author-name"><%= comment.user.name %></h3>
                 <p class="comment-date"><%= comment.date %></p>
             </div>
 
             <div class="comment-author-dropdown">
-                <p>XDDD</p>
+                <a href="/author/<%= comment.user.id %>">
+                    <img src="<%= comment.user.imagePath %>" alt="" class="comment-author-dropdown-img">
+                </a>
+                <a href="/author/<%= comment.user.id %>" class="comment-author-dropdown-name">
+                    <h3><%= comment.user.name %></h3>
+                </a>
+                <p class="comment-author-dropdown-followers">200 followers</p>
+                <p class="coment-author-dropdown-bio"><%= comment.user.bio %></p>
+
+                <button class="comment-author-dropdown-follow-btn">Follow</button>
             </div>
 
         </div>
@@ -27,7 +38,7 @@
                 <% } else { %> 
                     <i class="fa-solid fa-thumbs-up comment-like-icon"></i> 
                 <% } %> 
-                <p> <%= comment.likes %> </p> 
+                <p class="comment-likes"> <%= comment.likes %> </p> 
             </div>
         </div> 
 

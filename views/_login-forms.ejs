@@ -1,0 +1,48 @@
+<form id="login-form" class="login-form">
+    <h2>LOGIN</h2>
+
+    <div id="login-email-input-container">
+        <label>Your email</label>
+        <input type="text" id="login-email-input" name="email">
+    </div>
+
+    <div id="login-password-input-container">
+        <label>Your password</label>
+        <input type="text" id="login-password-input" name="password">
+    </div>
+
+    <p id="login-error-message"></p>
+
+    <button id="login-btn">Login</button>
+
+    <i class="fa-solid fa-x" id="close-login-form-btn"></i>
+</form>
+
+<!-- method="POST" action="/user/login" -->
+
+<form id="register-form" class="login-form" method="POST" action="/user/register" enctype="multipart/form-data">
+    <h2>REGISTER</h2>
+
+    <img src="/imgs/default-profile.png" id="img-preview">
+
+    <input type="file" name="img" id="img-input">
+
+    <div id="register-name-input-container">
+        <label>Your name</label>
+        <input type="text" id="register-name-input" name="name" required>
+    </div>
+
+    <div id="register-email-input-container">
+        <label>Your email</label>
+        <input type="text" id="register-email-input" name="email" required>
+    </div>
+
+    <div id="register-password-input-container">
+        <label>Your password </label>
+        <input type="text" id="register-password-input" name="password" required>
+    </div>
+
+    <button id="register-btn">Register</button>
+
+    <i class="fa-solid fa-x" id="close-register-form-btn"></i>
+</form>

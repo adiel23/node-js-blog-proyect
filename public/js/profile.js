@@ -65,7 +65,7 @@ const profileSettingsModal = document.getElementById('profile-settings-modal');
 const overlay = document.getElementById('overlay');
 
 showProfileSettingsModalBtn.addEventListener('click', () => {
-    profileSettingsModal.style.display = 'block';
+    profileSettingsModal.style.display = 'flex';
     overlay.style.display = 'block';
 });
 

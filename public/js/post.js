@@ -1,27 +1,82 @@
+import { validateUser } from "./modules/authentication.js";
+
 const postSection = document.getElementById('post-section');
 
 const postId = postSection.getAttribute('data-post-id');
 const userId = postSection.getAttribute('data-user-id');
+
 const postContent = postSection.getAttribute('data-post-content');
 
-// vamos con la parte del dropdown 
+// animacion para el postAuthorDropdown.
 
 let isMouseOverPostAuthorName = false;
 let isMouseOverPostAuthorDropdown = false;
+let isTimerOn = false;
+let isPostAuthorDropdownActive = false;
 
 const postAuthorName = document.getElementById('post-author-name');
 
 const postAuthorDropdown = document.getElementById("post-author-dropdown");
 
+let timer; 
+
 postAuthorName.addEventListener('mouseover', () => {
-    postAuthorDropdown.style.display = 'block';
+    isMouseOverPostAuthorName = true;
+
+    if (!isPostAuthorDropdownActive) {
+        isTimerOn = true;
+        timer = setTimeout(() => {
+            isTimerOn = false;
+            isPostAuthorDropdownActive = true;
+            postAuthorDropdown.style.display = 'block';
+        }, 1000);
+    };
+
+});
+
+postAuthorName.addEventListener('mouseout', () => {
+    isMouseOverPostAuthorName = false;
+    if (isTimerOn) {
+        clearTimeout(timer);
+    } else {
+        setTimeout(() => {
+            if (!isMouseOverPostAuthorDropdown) {
+                isPostAuthorDropdownActive = false;
+                postAuthorDropdown.style.display = 'none';
+            }
+        }, 100);
+    };
+});
+
+postAuthorDropdown.addEventListener("mouseenter", () => {
+    isMouseOverPostAuthorDropdown = true;
+});
+
+postAuthorDropdown.addEventListener('mouseleave', () => {
+    isMouseOverPostAuthorDropdown = false;
+    setTimeout(() => {
+        if (!isMouseOverPostAuthorName) {
+            isPostAuthorDropdownActive = false;
+            postAuthorDropdown.style.display = 'none';
+        }
+    }, 300);
+});
+
+const postAuthorDropdownFollowBtn = document.getElementById('post-author-dropdown-follow-btn');
+
+postAuthorDropdownFollowBtn.addEventListener("click", () => {
+    validateUser(() => {
+        alert('siguiendo');
+    }, userId)
+});
+
+const postFollowAuthorBtn = document.getElementById('post-follow-author-btn');
+
+postFollowAuthorBtn.addEventListener('click', () => {
+    validateUser(() => {
+        alert('siguiendo');
+    }, userId)
 })
-
-
-
-
-
-
 
 let isCommentTextareaActive = false;
 
@@ -56,7 +111,7 @@ clapsIcon.addEventListener('click', () => {
         } catch (err) {
             console.log('error al hacer el fetch de claps ' + err);
         }
-    });
+    }, userId);
 });
 
 // comments stat
@@ -84,7 +139,7 @@ commentTextarea.addEventListener('click', () => {
 
             cancelCommentBtn.style.display = 'block';
         }
-    });
+    }, userId);
 });
 
 commentTextarea.addEventListener('input', () => {
@@ -115,7 +170,7 @@ addCommentBtn.addEventListener('click', () => {
 
             updateComments(html);
         };
-    });
+    }, userId);
 });
 
 cancelCommentBtn.addEventListener('click', () => {
@@ -126,17 +181,20 @@ cancelCommentBtn.addEventListener('click', () => {
     addCommentBtn.classList.remove('enabled');
 })
 
-// ahora vamos a hacer lo de los likes de los comentarios.
+// configuraremos las diferentes eventos que pueden surgir al hacer clic dentro de comments container
+
+asignCommentsEvents();
 
 commentsContainer.addEventListener('click', async (event) => {
-    validateUser(async () => {
-        const element = event.target;
+    const element = event.target;
 
-        if (element.classList.contains('comment-like-icon')) {
-            const commentContainer = element.closest('.comment-container');
-            const commentId = commentContainer.getAttribute('data-comment-id');
+    const commentContainer = element.closest('.comment-container');
+    const commentId = commentContainer.getAttribute('data-comment-id');
+
+    if (element.classList.contains('comment-like-icon')) {
+        validateUser(async () => {
             const userId = commentContainer.getAttribute('data-user-id');
-            const likesCountP = commentContainer.querySelector('p');
+            const likesCountP = commentContainer.querySelector('.comment-likes');
 
             try {
                 const serverResponse = await fetch(`http://localhost:3000/post/${postId}/comments/${commentId}/likes`, {
@@ -162,84 +220,96 @@ commentsContainer.addEventListener('click', async (event) => {
 
             } catch (err) {
                 console.log('error al hacer el fetch ' + err);
-            };
-        } else if (element.classList.contains('delete-comment-btn')) {
-            const commentContainer = element.closest('.comment-container'); // el ancestro mas cercano que cumple con el selector especificado.
+            }
+        }, userId);
+    } else if (element.classList.contains('delete-comment-btn')) {
 
-            const commentId = commentContainer.getAttribute('data-comment-id');
+        commentToDeleteId = commentId;
 
-            commentToDeleteId = commentId;
+        commentDeletionContainer.classList.add('active');
+        document.body.classList.add('no-scroll');
 
-            overlay.style.display = 'block';
-            commentDeletionContainer.style.display = 'block';
-            document.body.classList.add('no-scroll');
+    } else if (element.classList.contains('edit-comment-btn')) {
 
-        } else if (element.classList.contains('edit-comment-btn')) {
-            const commentContainer = element.closest('.comment-container');
+        const commentContainerHTML = commentContainer.innerHTML;
 
-            const commentId = commentContainer.getAttribute('data-comment-id');
+        commentContainer.innerHTML = `
+        <div class="comment-editing-container">
+            <textarea class="comment-editing-textarea" placeholder="what are your thoughts?"></textarea>
 
-            const commentContainerHTML = commentContainer.innerHTML;
+            <div class="comment-editing-container-btns">
+                <button class="cancel-comment-editing-btn">
+                    Cancel
+                </button>
+                <button class="update-comment-btn">
+                    Update
+                </button>
+            </div>
+        </div>`;
 
-            commentContainer.innerHTML = `
-            <div class="comment-editing-container">
-                <textarea class="comment-editing-textarea"></textarea>
+        const commentEditingTextarea = commentContainer.querySelector('.comment-editing-textarea');
 
-                <div class="comment-editing-container-btns">
-                    <button class="cancel-comment-editing-btn">
-                        Cancel
-                    </button>
-                    <button class="update-comment-btn">
-                        Update
-                    </button>
-                </div>
-            </div>`;
-
-            const commentEditingTextarea = commentContainer.querySelector('.comment-editing-textarea');
-
-            const updateCommentBtn = commentContainer.querySelector('.update-comment-btn');
-
-            updateCommentBtn.addEventListener('click', async () => {
-                try {
-
-                    console.log(commentEditingTextarea.value);
-
-                    const response = await fetch(`/post/${postId}/comments/${commentId}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(
-                            {content: commentEditingTextarea.value}
-                        )
-                    });
-
-                    const renderedCommentsHTML = await response.text();
-
-                    updateComments(renderedCommentsHTML);
-
-                } catch (err) {
-                    console.log('error al hacer clic en el boton para actualizar comentario');
+        // animacion de habilitar y desabilitar boton
+        commentEditingTextarea.addEventListener('input', () => {
+            const value = commentEditingTextarea.value.trim();
+            if (value == '') {
+                if (updateCommentBtn.classList.contains('enabled')) {
+                    updateCommentBtn.classList.remove("enabled");
                 }
-            });
+            } else {
+                if (!updateCommentBtn.classList.contains('enabled')) {
+                    updateCommentBtn.classList.add('enabled');
+                }
+            }
+        });
 
-            const cancelCommentEditingBtn = commentContainer.querySelector('.cancel-comment-editing-btn');
+        const updateCommentBtn = commentContainer.querySelector('.update-comment-btn');
 
-            cancelCommentEditingBtn.addEventListener('click', () => {
-                commentContainer.innerHTML = commentContainerHTML;
-            });
+        updateCommentBtn.addEventListener('click', async () => {
+            try {
 
-        } else if (element.classList.contains('comment-dropdown-toggler')) {
-            const commentDropdown = element.nextElementSibling;
+                console.log(commentEditingTextarea.value);
 
-            commentDropdown.classList.toggle('active');
-        }
-    });
+                const response = await fetch(`/post/${postId}/comments/${commentId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(
+                        {content: commentEditingTextarea.value}
+                    )
+                });
+
+                const renderedCommentsHTML = await response.text();
+
+                updateComments(renderedCommentsHTML);
+
+            } catch (err) {
+                console.log('error al hacer clic en el boton para actualizar comentario');
+            }
+        });
+
+        const cancelCommentEditingBtn = commentContainer.querySelector('.cancel-comment-editing-btn');
+
+        cancelCommentEditingBtn.addEventListener('click', () => {
+            commentContainer.innerHTML = commentContainerHTML;
+        });
+
+    } else if (element.classList.contains('comment-dropdown-toggler')) {
+        const commentDropdown = element.nextElementSibling;
+
+        commentDropdown.classList.toggle('active');
+    } else if (element.classList.contains('comment-author-name')) {
+        const authorId = commentContainer.getAttribute("data-comment-author-id");
+        window.location.href = `/author/${authorId}`;
+    } else if (element.classList.contains('comment-author-dropdown-follow-btn')) {
+        validateUser(() => {
+            alert('following');
+        }, userId)
+    }
 });
 
 // overlay y mas
-
-const overlay = document.getElementById('overlay');
 
 const commentDeletionContainer = document.getElementById('comment-deletion-container');
 
@@ -274,14 +344,6 @@ deleteCommentBtn.addEventListener('click', async () => {
     };
 });
 
-const validateUser = (callback) => {
-    if (userId) {
-        callback()
-    } else {
-        window.location.href = '/';
-    }
-}
-
 async function updateComments(html) {
 
     commentsContainer.innerHTML = html;
@@ -291,10 +353,60 @@ async function updateComments(html) {
     commentsCounter.textContent = commentsNumber;
 
     commentsSectionTitle.textContent = `Comments (${commentsNumber})`;
+
+    asignCommentsEvents(); // reasignamos los eventos a cada comentario
 }
 
 function hideCommentDeletionContainer() {
-    overlay.style.display = 'none';
-    commentDeletionContainer.style.display = 'none';
+    commentDeletionContainer.classList.remove('active');
     document.body.classList.remove('no-scroll');
+}
+
+let isMouseOverCommentAuthorDropdown;
+let isMouseOverCommentAuthorName;
+let isCommentAuthorDropdownActive;
+
+function asignCommentsEvents() {
+    document.querySelectorAll(".comment-author-name").forEach(p => {
+        const commentContainer = p.closest('.comment-container');
+
+        const authorDropdown = commentContainer.querySelector('.comment-author-dropdown');
+
+        p.addEventListener("mouseover", () => {
+            isMouseOverCommentAuthorName = true;
+
+            if (!isCommentAuthorDropdownActive) {
+                isCommentAuthorDropdownActive = true;
+                authorDropdown.style.display = 'flex';
+            }
+        });
+
+        p.addEventListener('mouseout', () => {
+            isMouseOverCommentAuthorName = false;
+
+            setTimeout(() => {
+                if (!isMouseOverCommentAuthorDropdown) {
+                    isCommentAuthorDropdownActive = false;
+                    authorDropdown.style.display = 'none';
+                }
+            }, 300);
+        })
+
+        authorDropdown.addEventListener('mouseenter', () => {
+            isCommentAuthorDropdownActive = true;
+            isMouseOverCommentAuthorDropdown = true;
+        });
+
+        authorDropdown.addEventListener('mouseleave', () => {
+            isMouseOverCommentAuthorDropdown = false;
+
+            setTimeout(() => {
+                if (!isMouseOverCommentAuthorName) {
+                    isCommentAuthorDropdownActive = false;
+                    authorDropdown.style.display = 'none';
+                };
+            }, 300);
+        });
+
+    });
 }

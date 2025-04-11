@@ -101,3 +101,85 @@ header.search-results #header-options {
     height: 50px;
     border-radius: 50%;
 }
+
+/* para los usuarios no registrados */
+
+header button {
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background: lightgray;
+    opacity: .6;
+    display: none;
+}
+
+.login-form {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    display: none;
+}
+
+.login-form div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-form button {
+    background: rgb(31, 31, 31);
+    padding: 10px 20px;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background: black;
+}
+
+.login-form i {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    cursor: pointer;
+}
+
+#img-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.login-form input:not(#img-input) {
+    padding: 10px;
+    background: lightgray;
+    text-align: center;
+    border: none;
+}
+
+.login-form input:not(#img-input).active {
+    background: white;
+}

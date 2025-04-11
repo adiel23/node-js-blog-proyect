@@ -1,6 +1,6 @@
 <%- include('./head.ejs', {
     title: 'author-profile', 
-    cssFiles: ['author-profile.css', 'header.css'], 
+    cssFiles: ['header.css', 'author-profile.css',], 
     jsDependencies: {
         tinyMCE: true,
         fontawesome: true
@@ -20,57 +20,128 @@
         </header> 
     <% } %>
 
-    <div id="container">
+    <div id="container" data-user-id="<%= user ? user.id : '' %>">
         <div id="main">
-            <h2 id="author-name"><%= author.name %></h2>
+            <h2 id="main-author-name"><%= author.name %></h2>
 
             <div id="options">
-                <p>Home</p>
-                <p>About</p>
+                <p id="home">Home</p>
+                <p id="about">About</p>
             </div>
 
-            <div id="posts-container">
-                <% author.posts.forEach(post => { %>
-                    <div class="post-container" data-post-id="<%= post.id %>">
-                        <div class="post-info-container">
-                            <div class="post-info-container-top">
-                                <h3 class="post-title"><%= post.title %></h3>
-                            </div>
+            <div id="content">
 
-                            <div class="post-info-container-bottom">
-                                <p class="post-date"><%= post.date %></p>
-                                
-                                <div class="post-claps-container">
-                                    <i class="fa-solid fa-hands-clapping post-claps-icon"></i>
-                                    <p class="post-claps"><%= post.claps %></p>
+                <div id="home-content">
+                    <div id="posts-container">
+                        <% author.posts.forEach(post => { %>
+                            <div class="post-container" data-post-id="<%= post.id %>">
+                                <div class="post-info-container">
+
+                                    <div class="post-info-container-top">
+                                        <h3 class="post-title"><%= post.title %></h3>
+                                    </div>
+
+                                    <div class="post-info-container-bottom">
+                                        <p class="post-date"><%= post.date %></p>
+                                        
+                                        <div class="post-claps-container">
+                                            <i class="fa-solid fa-hands-clapping post-claps-icon"></i>
+                                            <p class="post-claps"><%= post.claps %></p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <img src="<%= post.imagePath %>" alt="" class="post-img">
+
+                                <div class="post-options">
+                                    <i class="fa-regular fa-bookmark save-post-icon"></i>
+                                    
+                                    <i class="fa-solid fa-ellipsis post-dropdown-toggler"></i>
+                                    <div class="post-dropdown">
+                                        <p class="post-dropdown-follow-author-btn">Follow author</p>
+                                        <p class="open-report-post-modal-btn">Report Story</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <img src="<%= post.imagePath %>" alt="" class="post-img">
+                        <% }) %>
                     </div>
-                <% }) %>
+                </div>
+
+                <div id="about-content">
+                    <p id="membership-time">THE BLOG member since</p>
+
+                    <div id="followers-container">
+                        <p>100 Followers</p>
+                        <p>3 following</p>
+                    </div>
+
+                    <div id="social-media-container">
+                        <p>Connect with <%= author.name %></p>
+                    </div>
+                    
+                </div>
+
+                <% if (user) { %>
+                    <div id="subscription-container">
+                        <h3>Get an email whenever <%= author.name %> publishes</h3>
+
+                        <div id="subscription-container-bottom">
+                            <p>Emails will be sent to <%= user.email %> </p>
+    
+                            <button id="subscription-container-subscribe-btn">Suscribe</button>
+                        </div>
+    
+                    </div>
+    
+                <% } %>
+               
             </div>
+
         </div>
         <aside>
-            <img src="<%= author.imagePath %>" alt="" id="author-img">
-            <h3 id="author-name"><%= author.name %></h3>
-            <p>800 followers</p>
-            <p id="author-bio"><%= author.bio %></p>
+            <div id="author-main">
+                <img src="<%= author.imagePath %>" alt="" id="author-img">
+
+                <div id="author-info">
+                    <h3 id="author-info-name"><%= author.name %></h3>
+                    <p id="author-info-followers">800 followers</p>
+                    <p id="author-info-bio"><%= author.bio %></p>
+                </div>
+            
+            </div>
+            
             <div id="author-profile-btns">
-                <button id="follow-btn">follow</button>
+                <button id="follow-author-btn">follow</button>
 
                 <button id="suscribe-btn"><i class="fa-solid fa-envelope"></i></button>
             </div>
         </aside>
     </div>
 
+    <div id="report-post-modal">
+        <h2>Report Post</h2>
+        <select id="reporting-reasons-select">
+            <option value="">Harassment</option>
+            <option value="">Rules violation</option>
+            <option value="">Spam</option>
+            <option value="">AI-generated</option>
+        </select>
+        <div id="report-post-modal-btns">
+            <button id="close-report-post-modal">Cancel</button>
+            <button id="report-post-btn" disabled>Report</button>
+        </div>
+    </div>
+
+    <div id="report-post-modal-overlay"></div>
+
     <% if (user) { %>
         <script src="/js/header.js"></script>
     <% } else { %>
-        <script src="/js/unlogged-users-index.js"></script>
+        <%- include('./_login-forms.ejs') %>
+        <script src="/js/unlogged-users-header.js"></script>
     <% } %>
 
-    <script src="/js/author-profile.js"></script>
+    <script src="/js/author-profile.js" type="module"></script>
     
 </body>
 </html>

@@ -95,7 +95,7 @@ export class Comment {
         this.user = user;
         this.content = content;
         this.likes = likes;
-        this.date = date;
+        this.date = new Date(date).toISOString().split('T')[0];;
     }
     static async create(id, userId, content, likes, date) {
         const user = await getUser(userId);

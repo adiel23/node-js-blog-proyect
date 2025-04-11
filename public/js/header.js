@@ -13,7 +13,7 @@ searchInput.addEventListener('keydown', (event) => {
         
         window.location.href = `/post/matches?q=${query}`;
     };
-})
+});
 
 // animation del profile
 
