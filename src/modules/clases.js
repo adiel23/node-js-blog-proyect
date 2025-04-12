@@ -1,4 +1,4 @@
-import {sql, connectToDatabase} from '../config/sqlConfig.js';
+import {connectToDatabase} from '../config/sqlConfig.js';
 
 export class User {
     constructor({id, name, email, password, role, imagePath, bio}) {
@@ -178,15 +178,18 @@ export async function getUserWithPosts(userId) {
 
 export async function getUserWithoutPosts(userId) {
     try {
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
 
-        const result = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query('select * from users where id = @userId')
+        const [results] = await connection.query(
+            'select * from users where id = ?'
+            [userId]
+        );
 
-        console.log('usuario sin posts' + result.recordset[0]);
+        const user = new User(results[0])
 
-        return new User(result.recordset[0]);
+        console.log('usuario sin posts obtenido: ' + user);
+
+        return user;
 
     } catch (err) {
         console.log('error en la funcion getUserWithoutPosts ' + err);

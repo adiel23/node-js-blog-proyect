@@ -1,4 +1,4 @@
-import {sql, connectToDatabase } from "../config/sqlConfig.js";
+import {connectToDatabase } from "../config/sqlConfig.js";
 
 export const register = (req, res) => {
     const {name, email, password} = req.body;

@@ -1,6 +1,5 @@
 import express from 'express';
 const router = express.Router();
-import * as controller from '../controllers/authors.controller.js';
 import upload from '../config/multerConfig.js';
 import { getUserWithoutPosts, getUserWithPosts } from '../modules/clases.js';
 

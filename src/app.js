@@ -42,53 +42,32 @@ app.get('/', async (req, res) => {
                 user = await getUserWithoutPosts(user.id);
             }
 
-            const pool = await connectToDatabase();
-            const request = pool.request();
-            request.stream = true;
-            request.query('select * from posts');
+            const connection = await connectToDatabase();
+
+            const [results] = await connection.query('select * from posts');
+
+            // me he quedado arreglando esto
     
             let posts = [];
+
+            for (let row of results) {
+                const post = await Post.create(
+                    row.id,
+                    row.userId,
+                    row.title,
+                    row.content,
+                    row.imagePath,
+                    row.date,
+                    row.claps,
+                    true,
+                    false
+                );
+                
+                posts.push(post);
+            }
+
     
-            let rowsToProcess = [];
-    
-            request.on('row', row => {
-                rowsToProcess.push(row);
-    
-                if (rowsToProcess.length >= 15) {
-                    request.pause();
-                    processRows().then(() => request.resume());
-                }
-            });
-    
-            request.on('done', async () => {
-                if (rowsToProcess.length > 0) {
-                    await processRows(); // terminamos de procesar las filas que no hayan sido procesadas.
-                }
-    
-                console.log(posts);
-    
-                res.render('index', {user, posts});
-            });
-    
-            async function processRows() {
-                for (const row of rowsToProcess) {
-                    const post = await Post.create(
-                        row.id,
-                        row.userId,
-                        row.title,
-                        row.content,
-                        row.imagePath,
-                        row.date,
-                        row.claps,
-                        true,
-                        false
-                    );
-    
-                    posts.push(post);
-                }
-    
-                rowsToProcess = [];
-            };
+            res.render('index', {user, posts});
     
         } catch (error) {
             console.log('hubo un error en la operacion sql: ' + error);

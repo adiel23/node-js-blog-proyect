@@ -1,4 +1,4 @@
-import {sql, connectToDatabase} from '../config/sqlConfig.js';
+import {connectToDatabase} from '../config/sqlConfig.js';
 
 import {getCompletePost, User, getUserWithPosts, Post, getUser} from '../modules/clases.js';
 
