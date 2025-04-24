@@ -49,16 +49,13 @@ export const createPost = (req, res) => {
 
     (async () => {
         try {
-            const pool = await connectToDatabase();
+            const connection = await connectToDatabase();
 
-            const result = await pool.request()
-                .input('userId', sql.Int, userId)
-                .input('title', sql.VarChar(255), title)
-                .input('content', sql.NVarChar, content)
-                .input('imagePath', sql.VarChar(255), imagePath)
-                .query('insert into posts (userId, title, content, imagePath) output inserted.id VALUES (@userId, @title, @content, @imagePath)');
+            const [results] = await connection.query('insert into posts (userId, title, content, imagePath, date) values (?, ?, ?, ?, CURDATE())', 
+                [userId, title, content, imagePath]
+            );
 
-            const postId = result.recordset[0].id;
+            const postId = results.insertId;
 
             res.redirect(`/post/${postId}`);
 
@@ -66,10 +63,6 @@ export const createPost = (req, res) => {
             console.log('error al hacer la conexion: ', error);
         }
     })()
-
-    sql.on('error', err => {
-        console.log('error en el sql: ', err);
-    });
 }
 
 export const getPost = async (req, res) => {
@@ -137,29 +130,24 @@ export const updatePost = async (req, res) => {
     try {
 
         if (file == undefined) {
-            const pool = await connectToDatabase();
+            const connection = await connectToDatabase();
 
-            const result = await pool.request()
-                .input('postId', sql.Int, postId)
-                .input('title', sql.VarChar(255), title)
-                .input('content', sql.NVarChar(), content)
-                .query('update posts set title = @title, content = @content output inserted.* where id = @postId');
+            const [results] = await connection.query('update posts set title = ?, content = ? where id = ?',
+                [postId, title, content]
+            );
 
-            console.log('resultado de hacer el update al post: ', result);
+            console.log('resultado de hacer el update al post: ', results);
         
         } else {
             const imagePath = `/uploads/${file.filename}`;
 
-            const pool = await connectToDatabase();
+            const connection = await connectToDatabase();
 
-            const result = await pool.request()
-                .input('postId', sql.Int, postId)
-                .input('title', sql.VarChar(255), title)
-                .input('content', sql.NVarChar(), content)
-                .input('imagePath', sql.VarChar(255), imagePath)
-                .query('update posts set title = @title, content = @content, imagePath = @imagePath output inserted.*  where id = @postId');
+            const [results] = await connection.query('update posts set title = ?, content = ?, imagePath = ? where id = ?', 
+                [postId, title, content, imagePath]
+            );
 
-            console.log('resultado de hacer el update al post: ', result);
+            console.log('resultado de hacer el update al post: ', results);
 
         }
 

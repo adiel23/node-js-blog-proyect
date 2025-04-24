@@ -13,18 +13,15 @@ export class User {
     }
     async hasLikedComment(commentId) {
         try {
-            const pool = await connectToDatabase();
+            const connection = await connectToDatabase();
 
-            const result = await pool.request()
-                .input('userId', sql.Int, this.id)
-                .input('commentId', sql.Int, commentId)
-                .query('select * from comment_likes where commentId = @commentId and userId = @userId')
+            const [results] = await connection.query('select * from comment_likes where commentId = @commentId and userId = @userId', [this.id, commentId]);
 
-                console.log('Resultado de la consulta:', result.recordset);
-                console.log('Es array:', Array.isArray(result.recordset));
-                console.log('Longitud del array:', result.recordset.length);
+                console.log('Resultado de la consulta:', results);
+                console.log('Es array:', Array.isArray(results));
+                console.log('Longitud del array:', results.length);
 
-            return result.recordset.length > 0;
+            return results.recordset.length > 0;
 
         } catch (err) {
             console.log('error al hacer la operacion para comprobar si el usuario ha dado like al comentario: ' + err);
@@ -35,15 +32,12 @@ export class User {
     }
     async hasClappedPost(postId) {
         try {
-            const pool = await connectToDatabase();
-            const result = await pool.request()
-                .input('userId', sql.Int, this.id)
-                .input('postId', sql.Int, postId)
-                .query('select * from post_claps where userId = @userId AND postId = @postId');
+            const connection = await connectToDatabase();
+            const [results] = await connection.query('select * from post_claps where userId = ? AND postId = ?', [this.id, postId]);
 
-            console.log(result);
+            console.log(results);
 
-            return result.recordset.length > 0;
+            return results.length > 0;
         } catch (err) {
             console.log('error en la funcion user.has clapped post ' + err);
         }
@@ -111,14 +105,12 @@ export class Comment {
 }
 
 export async function getCompletePost(postId) {
-    const pool = await connectToDatabase();
+    const connection = await connectToDatabase();
 
-    const result = await pool.request()
-        .input('postId', sql.Int, postId)
-        .query(`select * from posts where id = @postId`);
+    const [results] = await connection.query('select * from posts where id = ?', [postId]);
 
-    if (result.recordset.length > 0) {
-        const postData = result.recordset[0];
+    if (results.length > 0) {
+        const postData = results[0];
 
         const post = await Post.create(
             postData.id,
@@ -185,7 +177,7 @@ export async function getUserWithoutPosts(userId) {
             [userId]
         );
 
-        const user = new User(results[0])
+        const user = new User(results[0]);
 
         console.log('usuario sin posts obtenido: ' + user);
 
@@ -198,12 +190,12 @@ export async function getUserWithoutPosts(userId) {
 
 export async function getUser(userId) {
     try {
-        const pool = await connectToDatabase();
-        const result = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query('select * from users where id = @userId');
-
-        const user = result.recordset[0];
+        const connection = await connectToDatabase();
+        const [results] = await connection.query('select * from users where id = ?', 
+            [userId]
+        );
+    
+        const user = results[0];
     
         return new User(user);
     } catch (err) {
@@ -213,12 +205,12 @@ export async function getUser(userId) {
 
 export async function getPostComments(postId) {
     try {
-        const pool = await connectToDatabase();
-        const result = await pool.request()
-            .input('postId', sql.Int, postId)
-            .query('select * from comments where postId = @postId')
+        const connection = await connectToDatabase();
+        const [results] = await connection.query('select * from comments where postId = ?', 
+            [postId]
+        );
 
-        const comments = await Promise.all(result.recordset.map(async row => await Comment.create(row.id, row.userId, row.content, row.likes, row.date)));
+        const comments = await Promise.all(results.map(async row => await Comment.create(row.id, row.userId, row.content, row.likes, row.date)));
 
         return comments;
         
