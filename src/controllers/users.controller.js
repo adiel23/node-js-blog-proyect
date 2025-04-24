@@ -40,11 +40,11 @@ export const login = (req, res) => {
     
         (async () => {
             try {
-                const pool = await connectToDatabase();
+                const connection = await connectToDatabase();
                 
-                const resultData = await pool.query`select * from users where email = ${email} and password = ${password}`;
+                const [results] = await connection.query('select * from users where email = ? and password = ?', [email, password]);
     
-                const user = resultData.recordset[0];
+                const user = results[0];
 
                 if (user) {
                     req.session.user = user;
