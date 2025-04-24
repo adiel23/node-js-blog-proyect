@@ -181,7 +181,7 @@ export async function getUserWithoutPosts(userId) {
         const connection = await connectToDatabase();
 
         const [results] = await connection.query(
-            'select * from users where id = ?'
+            'select * from users where id = ?',
             [userId]
         );
 

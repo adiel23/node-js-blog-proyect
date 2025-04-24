@@ -15,20 +15,17 @@ export const register = (req, res) => {
 
     (async () => {
         try {
-            let pool = await connectToDatabase();
+            let connection = await connectToDatabase();
 
-            const result = await pool.request()
-            .input('name', sql.VarChar(255), name)
-            .input('email', sql.VarChar(255), email)
-            .input('password', sql.VarChar(255), password)
-            .input('imagePath', sql.VarChar(255), imagePath)
-            .query('insert into users (name, email, password, imagePath) output inserted.* values (@name, @email, @password, @imagePath)');
+            const [results] = await connection.query('insert into users (name, email, password, imagePath) values (?, ?, ?, ?)',
+                [name, email, password, imagePath]
+            );
 
-            console.log(result);
+            const userId = results.insertId;
 
-            const user = result.recordset[0];
+            const [rows] = await connection.query('select * from users where id = ?', [userId]);
 
-            req.session.user = user;
+            req.session.user = rows[0];
 
             res.redirect('/');
         } catch (err) {
