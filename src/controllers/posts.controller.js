@@ -163,22 +163,21 @@ export const updateClaps = (req, res) => {
 
     (async () => {
         try {
-            const pool = await connectToDatabase();
+            const connection = await connectToDatabase();
 
-            const insertResult = await pool.request()
-                .input('postId', sql.Int, postId)
-                .input('userId', sql.Int, userId)
-                .query('insert into post_claps (postId, userId) values (@postId, @userId)')
+            const [insertResults] = await connection.query('insert into post_claps (postId, userId) values (?, ?)', [postId, userId]);
 
-            console.log(insertResult);
+            console.log('resultados del insert ' + insertResults);
 
-            const updateResult = await pool.request()
-                .input('postId', sql.Int, postId)
-                .query('update posts set claps = claps + 1 output inserted.claps where id = @postId');
+            const [updateResults] = await connection.query('update posts set claps = claps + 1 where id = ?', [postId]);
 
-            console.log(updateResult);
+            console.log('resultados del update ' + updateResults);
 
-            const claps = updateResult.recordset[0].claps;
+            const [updatedPostRows] = await connection.query('SELECT * FROM posts WHERE id = ?', [postId]);
+
+            const updatedPost = updatedPostRows[0];
+            
+            const claps = updatedPost.claps;
 
             res.status(200).send({claps});
 
@@ -199,13 +198,11 @@ export const addComment = async (req, res) => {
     console.log(user);
 
     try {
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
 
-        const result = await pool.request()
-            .input('postId', sql.Int, postId)
-            .input('userId', sql.Int, user.id)
-            .input('content', sql.NVarChar(), content)
-            .query('insert into comments (postId, userId, content) VALUES (@postId, @userId, @content)');
+        const [results] = await connection.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [postId, user.id, content]);
+
+        console.log('resultados de insertar un nuevo comentario: ' + results);
 
         const post = await getCompletePost(postId);
 

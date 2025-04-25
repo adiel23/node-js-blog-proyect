@@ -15,13 +15,13 @@ export class User {
         try {
             const connection = await connectToDatabase();
 
-            const [results] = await connection.query('select * from comment_likes where commentId = @commentId and userId = @userId', [this.id, commentId]);
+            const [results] = await connection.query('select * from comment_likes where commentId = ? and userId = ?', [this.id, commentId]);
 
                 console.log('Resultado de la consulta:', results);
                 console.log('Es array:', Array.isArray(results));
                 console.log('Longitud del array:', results.length);
 
-            return results.recordset.length > 0;
+            return results.length > 0;
 
         } catch (err) {
             console.log('error al hacer la operacion para comprobar si el usuario ha dado like al comentario: ' + err);
@@ -131,19 +131,15 @@ export async function getCompletePost(postId) {
 
 export async function getUserWithPosts(userId) {
     try {
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
 
-        const userResult = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query(`select * from users where id = @userId`)
+        const [results] = await connection.query('select * from users where id = ?', [userId]);
 
-        const user = new User(userResult.recordset[0]);
+        const user = new User(results[0]);
         
-        const postsResult = await pool.request()
-            .input('userId', sql.Int, userId)
-            .query(`select * from posts where userId = @userId`);
+        const [rows] = await connection.query('select * from posts where userId = ?', [userId]);
 
-        const posts = postsResult.recordset;
+        const posts = rows;
 
         if (posts) {
             for (const postData of posts) {
