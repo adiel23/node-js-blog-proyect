@@ -224,15 +224,15 @@ export const deleteComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId);
 
     try {
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
         
-        const result = await pool.request()
-            .input('commentId', sql.Int, commentId)
-            .query(`
-                delete from comment_likes where commentId = @commentId;
+        const [results] = await connection.query(`
+                delete from comment_likes where commentId = ?;
 
-                delete from comments where id = @commentId;
-            `);
+                delete from comments where id = ?;
+            `, [commentId, commentId]);
+
+        console.log(results);
 
         const post = await getCompletePost(postId);
 
@@ -253,12 +253,9 @@ export const updateComment = async (req, res) => {
 
     try {
 
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
 
-        await pool.request()
-            .input('commentId', sql.Int, commentId)
-            .input('newContent', sql.NVarChar(), newContent)
-            .query('update comments set content = @newContent where id = @commentId');
+        await connection.query('update comments set content = ? where id = ?', [newContent, commentId]);
 
         const post = await getCompletePost(postId);
 
@@ -278,52 +275,44 @@ export const updateLikes = async (req, res) => {
 
     try {
 
-        const pool = await connectToDatabase();
-        const result = await pool.request()
-            .input('commentId', sql.Int, commentId)
-            .input('userId', sql.Int, userId)
-            .query('select * from comment_likes where commentId = @commentId and userId = @userId');
+        const connection = await connectToDatabase();
+        const [results] = await connection.query('select * from comment_likes where commentId = ? and userId = ?', [commentId, userId]);
 
-        console.log(result);
+        console.log(results);
 
         // lo segundo que haremos sera hacer el update.
 
-        if (result.recordset.length > 0) { // en caso de que ya se le haya dado like
-            const likeId = result.recordset[0].id;
+        if (results.length > 0) { // en caso de que ya se le haya dado like
+            const likeId = results[0].id;
 
-            const deleteResult = await pool.request()
-                .input('likeId', sql.Int, likeId)
-                .query('delete from comment_likes where id = @likeId');
+            const [deleteResults] = await connection.query('delete from comment_likes where id = ?', [likeId]);
 
-            console.log(deleteResult);
+            console.log(deleteResults);
 
-            const updateResult = await pool.request()
-                .input('commentId', sql.Int, commentId)
-                .query('update comments set likes = likes - 1 output inserted.likes where id = @commentId');
+            const [updateResults] = await connection.query('update comments set likes = likes - 1 where id = ?', [commentId]);
 
-            const likes = updateResult.recordset[0].likes;
+            const [selectResults] = await connection.query('select likes from comments where id = ?', [commentId]);
+
+            const likes = selectResults[0].likes;
 
             res.status(200).send({likes, liked: false});
                 
         } else { // en caso de que no se le haya dado like
-            const insertResult = await pool.request()
-                .input('commentId', sql.Int, commentId)
-                .input('userId', sql.Int, userId)
-                .query('insert into comment_likes (commentId, userId) values (@commentId, @userId)');
+            const [insertResults] = await connection.query('insert into comment_likes (commentId, userId) values (?, ?)', [commentId, userId])
 
-            console.log(insertResult);
+            console.log(insertResults);
 
-            const updateResult = await pool.request()
-                .input('commentId', sql.Int, commentId)
-                .query('update comments set likes = likes + 1 output inserted.likes where id = @commentId');
+            const [updateResult] = await connection.query('update comments set likes = likes + 1 where id = ?', [commentId]);
 
-            const likes = updateResult.recordset[0].likes;
+            const [selectResults] = await connection.query('select likes from comments where id = ?', [commentId]);
+                
+            const likes = selectResults[0].likes;
 
             res.status(200).send({likes, liked: true});
         }
         
     } catch (err) {
-        console.log('error en la consulta para actualizar los likes ' + err);
+        console.log('error en el controlador update likes ' + err);
         res.status(500).send({succes: false, error: 'error al actualizar los likes'});
     };
 };

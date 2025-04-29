@@ -6,7 +6,8 @@ export async function connectToDatabase() {
             host: 'localhost',
             user: 'root',
             database: 'blog',
-            password: '1234'
+            password: '1234',
+            multipleStatements: true 
         });
         
         return connection;

@@ -15,7 +15,7 @@ export class User {
         try {
             const connection = await connectToDatabase();
 
-            const [results] = await connection.query('select * from comment_likes where commentId = ? and userId = ?', [this.id, commentId]);
+            const [results] = await connection.query('select * from comment_likes where commentId = ? and userId = ?', [commentId, this.id]);
 
                 console.log('Resultado de la consulta:', results);
                 console.log('Es array:', Array.isArray(results));
