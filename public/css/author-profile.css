@@ -255,10 +255,39 @@ aside {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 300;
+    display: none;
+    flex-direction: column;
+    gap: 20px;
     background: white;
-    padding: 20px;
+    padding: 100px 120px;
     border-radius: 5px;
     box-shadow: 0px 0px 5px 5px grey;
+}
+
+#report-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#report-message {
+    font-size: 1.1rem;
+    color: green;
+}
+
+.report-post-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+#report-post-btn {
+    background: red;
+    color: white;
+}
+
+#report-post-btn:disabled {
+    opacity: 0.6;
 }
 
 @media (max-width: 900px) {

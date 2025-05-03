@@ -36,6 +36,8 @@ router.get('/:id', controller.getPost);
 
 router.delete('/:id', controller.removePost)
 
+router.post('/:id/report', controller.reportPost);
+
 router.post('/:id/update-claps', controller.updateClaps);
 
 router.post('/:id/comments', controller.addComment);

@@ -35,7 +35,11 @@ function hideModal(modalId) {
 
 // agregar animacion chingona a todos los input.
 
-const inputs = Array.from(document.querySelectorAll('input')).filter(input => input.id != 'img-input');
+const forms = document.querySelectorAll('.login-form');
+
+const loginForm = forms[0];
+
+const inputs = Array.from(loginForm.querySelectorAll('input'));
 
 inputs.forEach(input => {
     input.addEventListener('focus', () => {

@@ -118,17 +118,30 @@
         </aside>
     </div>
 
+    <div id="overlay"></div>
+
     <div id="report-post-modal">
         <h2>Report Post</h2>
-        <select id="reporting-reasons-select">
-            <option value="">Harassment</option>
-            <option value="">Rules violation</option>
-            <option value="">Spam</option>
-            <option value="">AI-generated</option>
-        </select>
+        <form id="report-post-form">
+            <label>
+              <input type="radio" name="report-reason" value="harassment">
+              Harrasment
+            </label>
+            <label>
+              <input type="radio" name="report-reason" value="AI-generated">
+              AI generated
+            </label>
+            <label>
+              <input type="radio" name="report-reason" value="spam">
+              Spam
+            </label>
+          </form>
+
+          <p id="report-message"></p>
+          
         <div id="report-post-modal-btns">
-            <button id="close-report-post-modal">Cancel</button>
-            <button id="report-post-btn" disabled>Report</button>
+            <button id="close-report-post-modal-btn" class="report-post-btn">Cancel</button>
+            <button id="report-post-btn" class="report-post-btn" disabled>Report</button>
         </div>
     </div>
 

@@ -2,6 +2,8 @@ import {validateUser} from './modules/authentication.js';
 
 const reportPostModalOverlay = document.getElementById('report-post-modal-overlay');
 
+const reportPostModal = document.getElementById('report-post-modal');
+
 const container = document.getElementById('container');
 
 const userId = container.getAttribute('data-user-id');
@@ -47,17 +49,38 @@ function setActiveTab(id) {
 
 const postsContainer = document.getElementById('posts-container');
 
+let postToReportId;
+
 postsContainer.addEventListener('click', (event) => {
     const element = event.target;
 
     if (element.classList.contains('open-report-post-modal-btn')) {
-        reportPostModalOverlay.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-
-    } else if (element.classList.contains('close-report-post-modal')){
-        reportPostModalOverlay.style.display = 'none';
-        document.body.style.overflow = 'auto';
         
+        validateUser(()=> {
+            (async () => {
+                const post = element.closest('.post-container');
+                postToReportId = post.getAttribute('data-post-id');
+
+                try {
+                    const hasReportedPost = await verifyReportedPost(postToReportId);
+
+                    if (!hasReportedPost) {
+                    
+                        reportPostModalOverlay.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                        reportPostModal.style.display = 'flex';
+                    } else {
+                        alert('ya ha reportado este post');
+                    }
+
+                } catch (err) {
+                    console.log('error en la funcion autoejecutable dentro de open-report-post-modal: ' + err)
+                }
+                
+            })();
+
+        }, userId);
+
     } else if (element.classList.contains('post-dropdown-toggler')) {
         const postOptions = element.closest('.post-options');
         const postDropdown = postOptions.querySelector('.post-dropdown');
@@ -80,6 +103,75 @@ postsContainer.addEventListener('click', (event) => {
 
     
 });
+
+const reportPostForm = document.getElementById('report-post-form');
+
+const reportPostBtn = document.getElementById('report-post-btn');
+
+let reportReason;
+
+let alreadyActivated = false;
+
+reportPostForm.addEventListener('change', (e) => {
+    if (e.target.name == 'report-reason') {
+        reportReason = e.target.value;
+        if (!alreadyActivated) {
+            reportPostBtn.disabled = false;
+        }
+    }
+});
+
+const reportMessage = document.getElementById('report-message');
+
+reportPostBtn.addEventListener('click', async () => {
+    try {
+        const response = await fetch(`/post/${postToReportId}/report`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                reportReason: reportReason
+            })
+        });
+
+        if (response.ok) {
+            reportMessage.textContent = 'reporte enviado';
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        const data = await response.json();
+
+        console.log('fetch exitoso ' + data);
+    } catch (err) {
+        console.log('error al hacer clic el boton de reportar post ' + err);
+    }
+    
+});
+
+const closeReportPostModalBtn = document.getElementById('close-report-post-modal-btn');
+
+closeReportPostModalBtn.addEventListener('click', () => {
+    reportPostModalOverlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    reportPostModal.style.display = 'none';
+});
+
+async function verifyReportedPost(postId) {
+    const response = await fetch(`/user/has-reported-post?postId=${postId}`);
+
+    const data = await response.json();
+    
+    console.log(data);
+
+    if (data.hasReportedPost) {
+        return true;
+    }
+    return false;
+}
 
 const followAuthorBtn = document.getElementById('follow-author-btn');
 

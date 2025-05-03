@@ -187,6 +187,26 @@ export const updateClaps = (req, res) => {
     })();
 }
 
+export const reportPost = async (req, res) => {
+    const userId = req.session.user.id;
+    const postId = parseInt(req.params.id);
+
+    const reportReason = req.body.reportReason;
+
+    try {
+        const connection = await connectToDatabase();
+
+        const insertResult = await connection.query('insert into reports (userId, postId, reason, date) values (?, ?, ?, curdate())', [userId, postId, reportReason]);
+
+        console.log(`resultado de crear un nuevo reporte de un post ${insertResult}`);
+
+        res.status(200).json({message: 'exito'});
+
+    } catch (err) {
+        console.log(`eror en el controlador reportPost ${err}`);
+    }
+}
+
 // vamos con los comentarios:
 
 export const addComment = async (req, res) => {

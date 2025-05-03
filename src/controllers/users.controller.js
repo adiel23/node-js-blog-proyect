@@ -1,4 +1,5 @@
 import {connectToDatabase } from "../config/sqlConfig.js";
+import { User } from "../models/User.js";
 
 export const register = (req, res) => {
     const {name, email, password} = req.body;
@@ -108,5 +109,21 @@ export const updateProfile = async (req, res) => {
 
     } catch (err) {
         console.log('error en la funcion update profile' + err);
+    }
+}
+
+export const hasReportedPost = async (req, res) => {
+    const {postId} = req.query;
+
+    const userId = req.session.user.id;
+
+    const user = new User(userId);
+
+    try {
+        const hasReportedPost = await user.hasReportedPost(postId);
+
+        res.json({hasReportedPost});
+    } catch (err) {
+        console.log('error en el controlador de usuario hasReportedPost: ' + err);
     }
 }

@@ -56,4 +56,6 @@ router.get('/without-posts', async (req, res) => {
     }
 });
 
+router.get('/has-reported-post', controller.hasReportedPost);
+
 export default router;
