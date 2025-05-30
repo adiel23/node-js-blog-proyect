@@ -43,17 +43,22 @@
 
             <input type="file" accept="image/*" id="profile-photo-input">
 
-            <button id="open-profile-photo-input-btn">Update</button>
+            <div id="profile-photo-section-btns">
+                <button id="open-profile-photo-input-btn">Update</button>
 
-            <button id="remove-profile-photo">remove</button>
+                <button id="remove-profile-photo">remove</button>   
+            </div>
+
         </section>
 
         <section id="user-info-section">
-            <div id="name-container">
+            <div id="name-container" class="input-container">
+                <label for="profile-settings-name-input">Name</label> 
                 <input type="text" value="<%= user.name %>" id="profile-settings-name-input">
             </div>
 
-            <div id="bio-container">
+            <div id="bio-container" class="input-container">
+                <label for="profile-settings-bio-input">Bio</label> 
                 <input type="text" value="<%= user.bio %>" id="profile-settings-bio-input">
             </div>
 
@@ -61,7 +66,7 @@
 
         <div id="profile-settings-btns">
             <button id="close-profile-settings-modal-btn">Cancel</button>
-            <button id="save-profile-changes-btn">Save</button>
+            <button id="save-profile-changes-btn" disabled>Save</button>
         </div>
     </div>
 

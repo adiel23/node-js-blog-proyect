@@ -2,7 +2,9 @@ import express from 'express';
 const router = express.Router();
 import * as controller from '../controllers/users.controller.js';
 import upload from '../config/multerConfig.js';
-import { getUserWithoutPosts, getUserWithPosts } from '../modules/clases.js';
+import { User } from '../models/User.js';
+
+router.get('/get-user', controller.getUser);
 
 router.get('/register', (req, res) => {
     res.render('register');
@@ -29,10 +31,10 @@ router.get('/log-out', (req, res) => {
 router.get('/profile', async (req, res) => {
     const userId = req.session.user.id;
 
-    console.log(userId)
+    console.log(userId);
 
     try {
-        const user = await getUserWithPosts(userId);
+        const user = await User.getById(userId, {includePosts: true});
 
         console.log(user);
         
@@ -42,13 +44,13 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-router.patch('/:id/profile', upload.single('imagePath'), controller.updateProfile)
+router.patch('/:id/update-profile', upload.single('imagePath'), controller.updateProfile)
 
 router.get('/without-posts', async (req, res) => {
     const userId = req.session.user.id;
 
     try {
-        const user = await getUserWithoutPosts(userId);
+        const user = await User.getById(userId);
 
         res.status(200).send(user);
     } catch (err) {

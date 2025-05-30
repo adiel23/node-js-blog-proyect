@@ -85,7 +85,7 @@ loginBtn.addEventListener('click', async (e) => {
     if (loginEmailInput.value == '' || loginPasswordInput.value == '') {
         loginErrorMessage.textContent = 'Completa todos los campos';
     } else {
-        const response = await fetch(`http://localhost:3000/user/login`, {
+        const response = await fetch(`http://localhost:3000/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

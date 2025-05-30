@@ -1,2 +1,8 @@
 node_modules/
 /public/uploads/
+backups/
+avances.txt
+avances.docx
+.env
+MySQL local.session.sql
+.vscode/

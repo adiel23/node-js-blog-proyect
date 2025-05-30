@@ -1,17 +1,16 @@
 import express from 'express';
 const router = express.Router();
-import upload from '../config/multerConfig.js';
-import { getUserWithoutPosts, getUserWithPosts } from '../modules/clases.js';
+import { User } from '../models/User.js';
 
 router.get('/:id', async (req, res) => {
     const authorId = req.params.id;
     let user = req.session.user;
 
     if (user) {
-        user = await getUserWithoutPosts(user.id);
+        user = await User.getById(user.id); // obtenemos el usuario sin sus posts
     }
     
-    const author = await getUserWithPosts(authorId);
+    const author = await User.getById(authorId, {includePosts: true}); // obtenemos el autor con sus posts
 
     res.render('author-profile', {user, author});
 });

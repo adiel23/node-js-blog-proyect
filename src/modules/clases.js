@@ -1,4 +1,4 @@
-import {connectToDatabase} from '../config/sqlConfig.js';
+import pool from '../config/sqlConfig.js';
 
 export class User {
     constructor({id, name, email, password, role, imagePath, bio}) {

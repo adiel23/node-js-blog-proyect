@@ -1,5 +1,15 @@
-import {connectToDatabase } from "../config/sqlConfig.js";
 import { User } from "../models/User.js";
+
+export const getUser = async (req, res) => {
+    const {id} = req.session.user;
+
+    try {
+        const user = await User.getById(id);
+        res.json({user});
+    } catch (err) {
+        console.log(`error en el controlador getUser: ${err}`);
+    }
+}
 
 export const register = (req, res) => {
     const {name, email, password} = req.body;
@@ -16,21 +26,24 @@ export const register = (req, res) => {
 
     (async () => {
         try {
-            let connection = await connectToDatabase();
+            const userToInsert = await User.create({
+                name,
+                email, 
+                password,
+                imagePath
+            });
 
-            const [results] = await connection.query('insert into users (name, email, password, imagePath) values (?, ?, ?, ?)',
-                [name, email, password, imagePath]
-            );
+            const insertedUser = await userToInsert.insert();
 
-            const userId = results.insertId;
-
-            const [rows] = await connection.query('select * from users where id = ?', [userId]);
-
-            req.session.user = rows[0];
+            req.session.user = {
+                id: insertedUser.id,
+                name: insertedUser.name,
+                email: insertedUser.email
+            };
 
             res.redirect('/');
         } catch (err) {
-            console.log('error al realizar la conexion: ' + err);
+            console.log('error en el controlador register: ' + err);
         };
 
     })()
@@ -39,27 +52,27 @@ export const register = (req, res) => {
 export const login = (req, res) => {
     const {email, password} = req.body;
     
-        (async () => {
-            try {
-                const connection = await connectToDatabase();
-                
-                const [results] = await connection.query('select * from users where email = ? and password = ?', [email, password]);
-    
-                const user = results[0];
+    (async () => {
+        try {
+            const user = await User.findByCredentials(email, password);
 
-                if (user) {
-                    req.session.user = user;
-                    res.status(200).send('exito');
-                } else {
-                    res.status(401).json({
-                        message: 'Usuario no encontrado'
-                    });
+            if (user) {
+                req.session.user = {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email
                 };
-    
-            } catch (err) {
-                console.log('error en el login: '+ err);
-            }
-        })();
+                res.status(200).send('exito');
+            } else {
+                res.status(401).json({
+                    message: 'Usuario no encontrado'
+                });
+            };
+
+        } catch (err) {
+            console.log('error en el controlador login: '+ err);
+        }
+    })();
 }
 
 export const updateProfile = async (req, res) => {
@@ -74,36 +87,24 @@ export const updateProfile = async (req, res) => {
     }
 
     let query = 'UPDATE users set ';
-    const params = [];
-    let i = 1;
+    const values = [];
 
     for (const [key, value] of Object.entries(updates)) {
-        query += `${key} = @params${i}, `;
-        params.push({
-            name: `params${i}`,
-            value
-        });
-        i++;
+        query += `${key} = ?, `;
+
+        values.push(value);
     }
 
-    query = query.slice(0, -2);
+    query = query.slice(0, -2); 
 
-    query += ' where id = @userId';
+    query += ' where id = ?';
 
     try {
-        const pool = await connectToDatabase();
+        const connection = await connectToDatabase();
 
-        const request = pool.request();
+        const [results] = await connection.query(query, [...values, id]);
 
-        params.forEach(param => {
-            request.input(param.name, param.value);
-        });
-
-        request.input('userId', sql.Int, id);
-
-        const result = await request.query(query);
-
-        console.log('resultado de hacer el update al perfil del usuario: ', result);
+        console.log('resultado de hacer el update al perfil del usuario: ', results);
 
         res.status(200).send('exito');
 
@@ -117,7 +118,7 @@ export const hasReportedPost = async (req, res) => {
 
     const userId = req.session.user.id;
 
-    const user = new User(userId);
+    const user = await User.getById(userId);
 
     try {
         const hasReportedPost = await user.hasReportedPost(postId);

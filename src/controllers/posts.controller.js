@@ -1,41 +1,16 @@
-import {connectToDatabase} from '../config/sqlConfig.js';
+import pool from '../config/sqlConfig.js';
 
-import {getCompletePost, User, getUserWithPosts, Post, getUser} from '../modules/clases.js';
+import {getCompletePost, getUserWithPosts, getUser} from '../modules/clases.js';
 
-export const getMatchingPosts = async (req, res) => {
-    const user = new User(req.session.user);
-    const query = req.query.q;
+import { Post } from '../models/Post.js';
+import { User } from '../models/User.js';
 
-    try {
-        const pool = await connectToDatabase();
-
-        const result = await pool.request()
-            .input('query', sql.VarChar(255), `%${query}%`)
-            .query(`select * from posts where title LIKE @query`);
-
-        const posts = await Promise.all(result.recordset.map(row => {
-            return Post.create(row.id, row.userId, row.title, row.content, row.imagePath, row.date, row.claps);
-        }) || []);
-
-        console.log(posts);
-
-        res.render('search-results', {user, posts, query});
-
-    } catch (err) {
-        console.log('error en el controlador getMatchingPosts');
-    }
-
-}
+// import { Post } from '../models/Post.js';
 
 export const createPost = (req, res) => {
     const userId = req.session.user.id;
 
-    console.log(userId);
-
     const {title, content} = req.body;
-
-    console.log('contenido del post: ' + content);
-    console.log('longitud del contenido ' + content.length);
 
     let imagePath;
     
@@ -49,18 +24,16 @@ export const createPost = (req, res) => {
 
     (async () => {
         try {
-            const connection = await connectToDatabase();
+            const postToInsert = await Post.create({
+                userId, title, content, imagePath
+            });
 
-            const [results] = await connection.query('insert into posts (userId, title, content, imagePath, date) values (?, ?, ?, ?, CURDATE())', 
-                [userId, title, content, imagePath]
-            );
+            const insertedPost = await postToInsert.insert() // este metodo devuelve el post insertado
 
-            const postId = results.insertId;
-
-            res.redirect(`/post/${postId}`);
+            res.redirect(`/posts/${insertedPost.id}`);
 
         } catch (error) {
-            console.log('error al hacer la conexion: ', error);
+            console.log('error en el controlador createPost : ', error);
         }
     })()
 }
@@ -73,17 +46,20 @@ export const getPost = async (req, res) => {
     
     // vamos a obtener el post con el id correspondiente y su comentarios correspondientes.
     try {
-        const post = await getCompletePost(postId);
+        const post = await Post.getById(postId, {
+            includeUser: true,
+            includeComments: true
+        });
 
         if (post) {
 
             if (user) {
-                user = new User(user);
+                user = await User.getById(user.id); // solo obtenemos el usuario sin sus posts
 
-                await user.hasClappedPost(post.id) ? post.hasClapped = true: null;
+                await user.hasClappedPost(post.id) ? post.hasBeenClapped = true: null;
     
                 for (const comment of post.comments) {
-                    comment.hasLiked = await user.hasLikedComment(comment.id);
+                    comment.hasBeenLiked = await user.hasLikedComment(comment.id);
                 }
             } 
             
@@ -97,25 +73,44 @@ export const getPost = async (req, res) => {
     }
 }
 
-export const removePost = async (req, res) => {
-    const postId = req.params.id;
+export const getMatchingPosts = async (req, res) => {
+    const query = req.query.q;
+    const search = `%${query}%`; // coincidencia en cualquier parte del texto
 
     try {
-        const pool = await connectToDatabase();
-        const result = await pool.request()
-            .input('postId', sql.Int, postId)
-            .query('delete from posts where id = @postId')
+        const user = req.session.user ? await User.getById(req.session.user.id) : null;
 
-        console.log(result);
+        const [results] = await pool.query(`select * from posts where title LIKE ?`, [search]);
 
-        const user = await getUserWithPosts(req.session.user.id);
+        const posts = await Promise.all(results.map(row => Post.create(row) ) );
 
-        console.log(user);
+        console.log(posts);
+
+        res.render('search-results', {user, posts, query});
+
+    } catch (err) {
+        console.log('error en el controlador getMatchingPosts');
+    }
+
+}
+
+export const removePost = async (req, res) => {
+    let user = req.session.user;
+    const postId = req.params.id;
+
+    if (!user) return res.redirect('/');
+
+    try {
+        const post = await Post.getById(postId);
+
+        await post.delete(); // eliminamos el post
+
+        const user = await User.getById(req.session.user.id, {includePosts: true});
 
         res.render('my-posts', {posts: user.posts});
 
     } catch (err) {
-        console.log('error en el controlador removePost ' + err)
+        console.log('error en el controlador removePost ' + err);
     }
 }
 
@@ -130,9 +125,7 @@ export const updatePost = async (req, res) => {
     try {
 
         if (file == undefined) {
-            const connection = await connectToDatabase();
-
-            const [results] = await connection.query('update posts set title = ?, content = ? where id = ?',
+            const [results] = await pool.query('update posts set title = ?, content = ? where id = ?',
                 [postId, title, content]
             );
 
@@ -141,9 +134,7 @@ export const updatePost = async (req, res) => {
         } else {
             const imagePath = `/uploads/${file.filename}`;
 
-            const connection = await connectToDatabase();
-
-            const [results] = await connection.query('update posts set title = ?, content = ?, imagePath = ? where id = ?', 
+            const [results] = await pool.query('update posts set title = ?, content = ?, imagePath = ? where id = ?', 
                 [postId, title, content, imagePath]
             );
 
@@ -163,17 +154,15 @@ export const updateClaps = (req, res) => {
 
     (async () => {
         try {
-            const connection = await connectToDatabase();
-
-            const [insertResults] = await connection.query('insert into post_claps (postId, userId) values (?, ?)', [postId, userId]);
+            const [insertResults] = await pool.query('insert into post_claps (postId, userId) values (?, ?)', [postId, userId]);
 
             console.log('resultados del insert ' + insertResults);
 
-            const [updateResults] = await connection.query('update posts set claps = claps + 1 where id = ?', [postId]);
+            const [updateResults] = await pool.query('update posts set claps = claps + 1 where id = ?', [postId]);
 
             console.log('resultados del update ' + updateResults);
 
-            const [updatedPostRows] = await connection.query('SELECT * FROM posts WHERE id = ?', [postId]);
+            const [updatedPostRows] = await pool.query('SELECT * FROM posts WHERE id = ?', [postId]);
 
             const updatedPost = updatedPostRows[0];
             
@@ -194,9 +183,7 @@ export const reportPost = async (req, res) => {
     const reportReason = req.body.reportReason;
 
     try {
-        const connection = await connectToDatabase();
-
-        const insertResult = await connection.query('insert into reports (userId, postId, reason, date) values (?, ?, ?, curdate())', [userId, postId, reportReason]);
+        const insertResult = await pool.query('insert into reports (userId, postId, reason, date) values (?, ?, ?, curdate())', [userId, postId, reportReason]);
 
         console.log(`resultado de crear un nuevo reporte de un post ${insertResult}`);
 
@@ -218,13 +205,11 @@ export const addComment = async (req, res) => {
     console.log(user);
 
     try {
-        const connection = await connectToDatabase();
-
-        const [results] = await connection.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [postId, user.id, content]);
+        const [results] = await pool.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [postId, user.id, content]);
 
         console.log('resultados de insertar un nuevo comentario: ' + results);
 
-        const post = await getCompletePost(postId);
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
 
         for (const comment of post.comments) {
             comment.hasLiked = await user.hasLikedComment(comment.id);
@@ -237,16 +222,18 @@ export const addComment = async (req, res) => {
 };
 
 export const deleteComment = async (req, res) => {
-    const user = new User(req.session.user);
+    let user = req.session.user;
 
     const postId = parseInt(req.params.id);
 
     const commentId = parseInt(req.params.commentId);
 
+    if (!user) return res.redirect('/');
+
     try {
-        const connection = await connectToDatabase();
-        
-        const [results] = await connection.query(`
+        user = await User.create(user);
+
+        const [results] = await pool.query(`
                 delete from comment_likes where commentId = ?;
 
                 delete from comments where id = ?;
@@ -254,7 +241,7 @@ export const deleteComment = async (req, res) => {
 
         console.log(results);
 
-        const post = await getCompletePost(postId);
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
 
         res.render('_comments', {post, user});
 
@@ -264,20 +251,20 @@ export const deleteComment = async (req, res) => {
 }
 
 export const updateComment = async (req, res) => {
-    const user = new User(req.session.user);
+    let user = req.session.user;
     const postId = parseInt(req.params.id);
     const commentId = parseInt(req.params.commentId);
     const newContent = req.body.content;
 
-    console.log('contenido nuevo ' + newContent);
+    if (!user) return res.redirect('/');
 
     try {
 
-        const connection = await connectToDatabase();
+        user = await User.create(user);
 
-        await connection.query('update comments set content = ? where id = ?', [newContent, commentId]);
+        await pool.query('update comments set content = ? where id = ?', [newContent, commentId]);
 
-        const post = await getCompletePost(postId);
+        const post = await await Post.getById(postId, {includeUser: true, includeComments: true});
 
         for (const comment of post.comments) {
             comment.hasLiked = await user.hasLikedComment(comment.id);
@@ -294,37 +281,35 @@ export const updateLikes = async (req, res) => {
     const {commentId, userId} = req.body;
 
     try {
+        const [results] = await pool.query('select * from comment_likes where commentId = ? and userId = ?', [commentId, userId]);
 
-        const connection = await connectToDatabase();
-        const [results] = await connection.query('select * from comment_likes where commentId = ? and userId = ?', [commentId, userId]);
-
-        console.log(results);
+        console.log('likes: ', results);
 
         // lo segundo que haremos sera hacer el update.
 
         if (results.length > 0) { // en caso de que ya se le haya dado like
             const likeId = results[0].id;
 
-            const [deleteResults] = await connection.query('delete from comment_likes where id = ?', [likeId]);
+            const [deleteResults] = await pool.query('delete from comment_likes where id = ?', [likeId]);
 
             console.log(deleteResults);
 
-            const [updateResults] = await connection.query('update comments set likes = likes - 1 where id = ?', [commentId]);
+            const [updateResults] = await pool.query('update comments set likes = likes - 1 where id = ?', [commentId]);
 
-            const [selectResults] = await connection.query('select likes from comments where id = ?', [commentId]);
+            const [selectResults] = await pool.query('select likes from comments where id = ?', [commentId]);
 
             const likes = selectResults[0].likes;
 
             res.status(200).send({likes, liked: false});
                 
         } else { // en caso de que no se le haya dado like
-            const [insertResults] = await connection.query('insert into comment_likes (commentId, userId) values (?, ?)', [commentId, userId])
+            const [insertResults] = await pool.query('insert into comment_likes (commentId, userId) values (?, ?)', [commentId, userId])
 
             console.log(insertResults);
 
-            const [updateResult] = await connection.query('update comments set likes = likes + 1 where id = ?', [commentId]);
+            const [updateResult] = await pool.query('update comments set likes = likes + 1 where id = ?', [commentId]);
 
-            const [selectResults] = await connection.query('select likes from comments where id = ?', [commentId]);
+            const [selectResults] = await pool.query('select likes from comments where id = ?', [commentId]);
                 
             const likes = selectResults[0].likes;
 

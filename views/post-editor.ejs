@@ -12,7 +12,7 @@
     <div id="container">
         <h2 id="title"> <%= post ? 'edit your post' : 'add a post' %> </h2>
 
-        <form id="create-post-form" action="<%= post ? `/post/${post.id}/update?_method=PATCH` : '/post/new' %>" method="post" enctype="multipart/form-data">
+        <form id="create-post-form" action="<%= post ? `/posts/${post.id}/update?_method=PATCH` : '/posts/new' %>" method="post" enctype="multipart/form-data">
 
             <img src="<%= post ? post.imagePath : '/imgs/image-icon.png' %>" id="preview-img">
 

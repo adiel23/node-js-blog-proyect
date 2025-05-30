@@ -91,7 +91,7 @@ saveProfileChangesBtn.addEventListener('click', async () => {
         formData.append('bio', userChanges.bio)
     };
 
-    const result = await fetch(`http://localhost:3000/user/${userId}/profile`, {
+    const result = await fetch(`http://localhost:3000/user/${userId}/update-profile`, {
         method: 'PATCH',
         body: formData
     });
@@ -136,12 +136,35 @@ const profileSettingsNameInput = document.getElementById('profile-settings-name-
 
 profileSettingsNameInput.addEventListener('input', () => {
     userChanges.name = profileSettingsNameInput.value;
+    checkForChanges();
 });
 
 const profileSettingsBioInput = document.getElementById('profile-settings-bio-input');
 
 profileSettingsBioInput.addEventListener('input', () => {
     userChanges.bio = profileSettingsBioInput.value;
-})
+    checkForChanges();
+});
+
+let userData = false;
+
+async function checkForChanges() {
+    if (!userData) {
+        const response = await fetch('/user/get-user');
+
+        const data = await response.json();
+
+        userData = data.user;
+    }
+
+    const nameChanged = profileSettingsNameInput.value !== userData.name;
+    const bioChanged = profileSettingsBioInput.value !== userData.bio;
+
+    if (nameChanged || bioChanged) {
+        saveProfileChangesBtn.disabled = false;
+    } else {
+        saveProfileChangesBtn.disabled = true;
+    }
+}
 
 

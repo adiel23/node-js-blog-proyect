@@ -71,6 +71,16 @@
     border-radius: 50%;
 }
 
+#show-profile-settings-modal-btn {
+    cursor: pointer;
+    color: green;
+    font-weight: bold;
+}
+
+#show-profile-settings-modal-btn:hover {
+    color: black;
+}
+
 /* overlay */
 
 #overlay {
@@ -94,12 +104,18 @@
     z-index: 200;
     display: none;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     padding: 20px;
     border-radius: 10px;
-    width: 100%;
-    max-width: 300px;
+    width: 500%;
+    max-width: 500px;
     background: white;
+}
+
+#profile-photo-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 #profile-settings-user-img {
@@ -108,5 +124,49 @@
 
 #profile-photo-input {
     display: none;
+}
+
+#user-info-section, .input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#user-info-section {
+    gap: 40px;
+}
+
+.input-container {
+    gap: 5px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    background: rgb(241, 240, 240);
+}
+
+input:focus {
+    background: white;
+}
+
+#profile-settings-btns button {
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+#close-profile-settings-modal-btn {
+    border: 1px solid green;
+    color: green;
+    background: white;
+}
+
+#save-profile-changes-btn {
+    background: green;
+    color: white;
+    border: none;
+}
+
+#save-profile-changes-btn:disabled {
+    opacity: .4;
 }
 

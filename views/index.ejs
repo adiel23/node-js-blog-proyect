@@ -21,19 +21,19 @@
                 <% posts.forEach(post => { %>
                     <div class="post-container">
 
-                        <a href="/post/<%=post.id %>" class="post-link">
+                        <a href="/posts/<%=post.id %>" class="post-link">
                             <img src="<%= post.imagePath %>" class="post-img">
                             <h3 class="post-title"> <%= post.title %> </h3>
                             <!-- <div id="post-content"> </div> -->
                         </a>
 
                         <div class="post-author-section">
-                            <a href="/author/<%= post.user.id %>">
+                            <a href="/authors/<%= post.user.id %>">
                                 <img src="<%= post.user.imagePath %>" alt="" class="author-img">
                             </a>
                             
                             <div id="author-info">
-                                <a href="/author/<%= post.user.id %>" class="author-name">
+                                <a href="/authors/<%= post.user.id %>" class="author-name">
                                     <p><%= post.user.name %></p>
                                 </a> 
                                 <p class="post-date"><%= post.date %></p>
@@ -41,8 +41,8 @@
 
                             <div class="author-dropdown">
                                 <div class="author-dropdown-main">
-                                    <a class="author-dropdown-name" href="/author/<%=post.user.id%>"><%= post.user.name %></a>
-                                    <a href="/author/<%= post.user.id %>">
+                                    <a class="author-dropdown-name" href="/authors/<%=post.user.id%>"><%= post.user.name %></a>
+                                    <a href="/authors/<%= post.user.id %>">
                                         <img src="<%= post.user.imagePath %>" alt="" class="author-dropdown-img">
                                     </a>
                                 </div>
