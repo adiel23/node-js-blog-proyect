@@ -18,24 +18,24 @@
 
         <div id="post-author-section">
             <div id="post-author-section-left">
-                <a href="/author/<%= post.user.id %>">
+                <a href="/authors/<%= post.user.id %>">
                     <img src="<%= post.user.imagePath %>" alt="" id="post-author-img">
                 </a>
             </div>
 
             <div id="post-author-section-right">
                 <div id="post-author-info">
-                    <a id="post-author-name" href="/author/<%= post.user.id %>"><%= post.user.name %> </a>
+                    <a id="post-author-name" href="/authors/<%= post.user.id %>"><%= post.user.name %> </a>
                     <p id="post-follow-author-btn">Follow</p>
                 </div>
                 <p id="post-date"><%= post.date %></p>
             </div>
 
             <div id="post-author-dropdown">
-                <a href="/author/<%= post.user.id %>">
+                <a href="/authors/<%= post.user.id %>">
                     <img src="<%= post.user.imagePath %>" alt="" id="post-author-dropdown-img">
                 </a>
-                <a href="/author/<%= post.user.id %>" id="post-author-dropdown-name">
+                <a href="/authors/<%= post.user.id %>" id="post-author-dropdown-name">
                     <h3><%= post.user.name %></h3>
                 </a>
                 <p id="post-author-dropdown-followers">0 followers</p>

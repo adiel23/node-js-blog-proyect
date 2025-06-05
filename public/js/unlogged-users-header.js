@@ -106,6 +106,6 @@ loginBtn.addEventListener('click', async (e) => {
     }
 
     
-})
+});
 
 

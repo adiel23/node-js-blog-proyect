@@ -97,7 +97,7 @@ postsContainer.addEventListener('click', (event) => {
 
         const postId = postContainer.getAttribute('data-post-id');
 
-        window.location.href = `/post/${postId}`;
+        window.location.href = `/posts/${postId}`;
         
     }
 
@@ -125,7 +125,7 @@ const reportMessage = document.getElementById('report-message');
 
 reportPostBtn.addEventListener('click', async () => {
     try {
-        const response = await fetch(`/post/${postToReportId}/report`, {
+        const response = await fetch(`/posts/${postToReportId}/report`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -161,7 +161,7 @@ closeReportPostModalBtn.addEventListener('click', () => {
 });
 
 async function verifyReportedPost(postId) {
-    const response = await fetch(`/user/has-reported-post?postId=${postId}`);
+    const response = await fetch(`/users/has-reported-post?postId=${postId}`);
 
     const data = await response.json();
     

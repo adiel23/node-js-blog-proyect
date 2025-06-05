@@ -5,7 +5,7 @@ if (postContainers.length > 0) {
         container.addEventListener("click", () => {
             const postId = container.getAttribute('data-post-id');
 
-            window.location.href = `/post/${postId}`;
+            window.location.href = `/posts/${postId}`;
         })
     })
 }

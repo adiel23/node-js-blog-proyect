@@ -1,3 +1,4 @@
+import pool from "../config/sqlConfig.js";
 import { User } from "../models/User.js";
 
 export const getUser = async (req, res) => {
@@ -100,9 +101,7 @@ export const updateProfile = async (req, res) => {
     query += ' where id = ?';
 
     try {
-        const connection = await connectToDatabase();
-
-        const [results] = await connection.query(query, [...values, id]);
+        const [results] = await pool.query(query, [...values, id]);
 
         console.log('resultado de hacer el update al perfil del usuario: ', results);
 

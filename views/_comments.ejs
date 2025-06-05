@@ -4,7 +4,7 @@
         <div class="comment-author-section comment-section"> 
 
             <div class="comment-author-section-left">
-                <a href="/author/<%= post.user.id %>">
+                <a href="/authors/<%= post.user.id %>">
                     <img src="<%= comment.user.imagePath %>" alt="image" class="comment-author-img">
                 </a>
             </div>
@@ -15,10 +15,10 @@
             </div>
 
             <div class="comment-author-dropdown">
-                <a href="/author/<%= comment.user.id %>">
+                <a href="/authors/<%= comment.user.id %>">
                     <img src="<%= comment.user.imagePath %>" alt="" class="comment-author-dropdown-img">
                 </a>
-                <a href="/author/<%= comment.user.id %>" class="comment-author-dropdown-name">
+                <a href="/authors/<%= comment.user.id %>" class="comment-author-dropdown-name">
                     <h3><%= comment.user.name %></h3>
                 </a>
                 <p class="comment-author-dropdown-followers">200 followers</p>

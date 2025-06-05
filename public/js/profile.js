@@ -2,7 +2,7 @@ const userId = document.body.getAttribute('data-user-id');
 
 let userChanges = {};
 
-fetch('http://localhost:3000/user/without-posts')
+fetch('http://localhost:3000/users/without-posts')
 .then(response => response.json())
 .then(user => {
     console.log(user);
@@ -22,7 +22,7 @@ postsContainer.addEventListener('click', (event) => {
 
         (async () => {
             try {
-                const response = await fetch(`http://localhost:3000/post/${postId}`, {
+                const response = await fetch(`http://localhost:3000/posts/${postId}`, {
                     method: 'DELETE'
                 });
 
@@ -47,7 +47,7 @@ postsContainer.addEventListener('click', (event) => {
     } else if (!element.classList.contains('edit-post-btn')) {
         const postContainer = element.closest('.post-container');
         const postId = postContainer.getAttribute('data-post-id');
-        window.location.href = `/post/${postId}`;
+        window.location.href = `/posts/${postId}`;
     }
 
 });
@@ -91,13 +91,13 @@ saveProfileChangesBtn.addEventListener('click', async () => {
         formData.append('bio', userChanges.bio)
     };
 
-    const result = await fetch(`http://localhost:3000/user/${userId}/update-profile`, {
+    const result = await fetch(`http://localhost:3000/users/${userId}/update-profile`, {
         method: 'PATCH',
         body: formData
     });
 
     if (result.ok) {
-        window.location.href = 'http://localhost:3000/user/profile';
+        window.location.href = 'http://localhost:3000/users/profile';
     };
 
 });
@@ -150,7 +150,7 @@ let userData = false;
 
 async function checkForChanges() {
     if (!userData) {
-        const response = await fetch('/user/get-user');
+        const response = await fetch('/users/get-user');
 
         const data = await response.json();
 

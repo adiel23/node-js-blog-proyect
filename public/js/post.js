@@ -91,7 +91,7 @@ const clapsCounter = document.getElementById('claps-counter');
 clapsIcon.addEventListener('click', () => {
     validateUser(async () => {
         try {
-            const serverResponse = await fetch(`http://localhost:3000/post/${postId}/update-claps`, {
+            const serverResponse = await fetch(`http://localhost:3000/posts/${postId}/update-claps`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -155,7 +155,7 @@ commentTextarea.addEventListener('input', () => {
 addCommentBtn.addEventListener('click', () => {
     validateUser(async () => {
 
-        const serverResponse = await fetch(`http://localhost:3000/post/${postId}/comments`, {
+        const serverResponse = await fetch(`http://localhost:3000/posts/${postId}/comments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -197,7 +197,7 @@ commentsContainer.addEventListener('click', async (event) => {
             const likesCountP = commentContainer.querySelector('.comment-likes');
 
             try {
-                const serverResponse = await fetch(`http://localhost:3000/post/${postId}/comments/${commentId}/likes`, {
+                const serverResponse = await fetch(`http://localhost:3000/posts/${postId}/comments/${commentId}/likes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -270,7 +270,7 @@ commentsContainer.addEventListener('click', async (event) => {
 
                 console.log(commentEditingTextarea.value);
 
-                const response = await fetch(`/post/${postId}/comments/${commentId}`, {
+                const response = await fetch(`/posts/${postId}/comments/${commentId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
@@ -301,7 +301,7 @@ commentsContainer.addEventListener('click', async (event) => {
         commentDropdown.classList.toggle('active');
     } else if (element.classList.contains('comment-author-name')) {
         const authorId = commentContainer.getAttribute("data-comment-author-id");
-        window.location.href = `/author/${authorId}`;
+        window.location.href = `/authors/${authorId}`;
     } else if (element.classList.contains('comment-author-dropdown-follow-btn')) {
         validateUser(() => {
             alert('following');
@@ -325,7 +325,7 @@ const deleteCommentBtn = document.getElementById('delete-comment-btn');
 
 deleteCommentBtn.addEventListener('click', async () => {
     try {
-        const response = await fetch(`http://localhost:3000/post/${postId}/comments/${commentToDeleteId}`, {
+        const response = await fetch(`http://localhost:3000/posts/${postId}/comments/${commentToDeleteId}`, {
             method: 'DELETE'
         });
 
