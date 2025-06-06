@@ -10,12 +10,14 @@ import { User } from '../models/User.js';
 
 import { Post } from '../models/Post.js';
 
-router.get('/new', async (req, res) => {
+import { checkRole } from '../middlewares/checkRole.js';
+
+router.get('/new', checkRole(['author, admin']), async (req, res) => {
     try {
         const user = await User.create(req.session.user);
         res.render('post-editor', {user, post: undefined});
     } catch (err) {
-        console.log('error en la ruta /new de post.routes')
+        console.log('error en el controlador get de la ruta new de post.routes')
     }
 });
 

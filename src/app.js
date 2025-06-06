@@ -9,7 +9,7 @@ import userRoutes from './routes/user.routes.js';
 import authorRoutes from './routes/author.routes.js';
 import postRoutes from './routes/post.routes.js';
 import commentRoutes from './routes/comment.routes.js';
-
+import authRoutes from './routes/auth.routes.js';
 
 import { fileURLToPath } from 'url';
 import { User } from './models/User.js';
@@ -68,6 +68,8 @@ app.get('/', async (req, res) => {
         console.log('hubo un error en la operacion sql en la ruta /: ' + error);
     }
 });
+
+app.use('/auth', authRoutes);
 
 app.use('/posts', postRoutes);
 
