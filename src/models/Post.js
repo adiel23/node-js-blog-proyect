@@ -71,4 +71,16 @@ export class Post {
     getCommentsNumber() {
         return this.comments.length;
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            title: this.title,
+            content: this.content,
+            imagePath: this.imagePath,
+            date: this.date,
+            claps: this.claps,
+            comments: this.comments.map(comment => comment.toJSON())
+        }
+    }
 }

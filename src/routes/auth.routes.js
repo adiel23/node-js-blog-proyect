@@ -16,4 +16,6 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 
+router.post('/login', controller.login);
+
 export default router;

@@ -89,6 +89,8 @@ postsContainer.addEventListener('click', (event) => {
         
     } else if(element.classList.contains('save-post-icon')) {
         alert('xd');
+    } else if (element.classList.contains("post-dropdown-follow-author-btn")) {
+        validateUser(() => {alert('usuario seguido con exito')}, userId);
     } else {
 
         const postContainer = element.closest('.post-container');

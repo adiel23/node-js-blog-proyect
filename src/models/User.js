@@ -92,4 +92,16 @@ export class User {
         return posts;
         
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            role: this.role,
+            imagePath: this.imagePath,
+            bio: this.bio
+        }
+    }
+    
 }

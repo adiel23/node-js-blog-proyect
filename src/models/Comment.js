@@ -62,4 +62,15 @@ export class Comment {
         return this.content.replace(/\n/g, '<br>');
     }
 
+    toJSON() {
+        return {
+            id: this.id,
+            content: this.content,
+            likes: this.likes,
+            date: this.date,
+            user: this.user ? this.user.toJSON() : null,
+            userId: this.user ? null : this.userId
+        }
+    }
+
 }

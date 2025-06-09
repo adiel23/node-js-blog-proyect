@@ -27,7 +27,8 @@ export const register = (req, res) => {
             req.session.user = {
                 id: insertedUser.id,
                 name: insertedUser.name,
-                email: insertedUser.email
+                email: insertedUser.email,
+                role: insertedUser.role
             };
 
             res.redirect('/');
@@ -35,7 +36,7 @@ export const register = (req, res) => {
             console.log('error en el controlador register: ' + err);
         };
 
-    })()
+    })();
 }
 
 export const login = (req, res) => {
@@ -49,7 +50,8 @@ export const login = (req, res) => {
                 req.session.user = {
                     id: user.id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    role: user.role
                 };
                 res.status(200).send('exito');
             } else {
