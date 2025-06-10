@@ -97,7 +97,7 @@ loginBtn.addEventListener('click', async (e) => {
         });
 
         if (response.ok) {
-            window.location.href = '/'
+            window.location.href = '/home/'
         } else {
             const parsedResponse = await response.json();
             

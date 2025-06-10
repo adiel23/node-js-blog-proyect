@@ -46,6 +46,8 @@ export const login = (req, res) => {
         try {
             const user = await User.findByCredentials(email, password);
 
+            console.log('user: ', user);
+
             if (user) {
                 req.session.user = {
                     id: user.id,
@@ -65,3 +67,13 @@ export const login = (req, res) => {
         }
     })();
 }
+
+export const logout = (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).send('Error al cerrar sesión');
+    }
+    res.clearCookie('connect.sid'); // Limpia la cookie de sesión
+    res.send('Sesión cerrada');
+  });
+};

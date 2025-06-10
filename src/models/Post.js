@@ -75,6 +75,8 @@ export class Post {
     toJSON() {
         return {
             id: this.id,
+            user: this.user ? this.user.toJSON() : null,
+            userId: this.user? null : this.userId,
             title: this.title,
             content: this.content,
             imagePath: this.imagePath,

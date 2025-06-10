@@ -18,4 +18,6 @@ router.get('/login', (req, res) => {
 
 router.post('/login', controller.login);
 
+router.get('/log-out', controller.logout);
+
 export default router;

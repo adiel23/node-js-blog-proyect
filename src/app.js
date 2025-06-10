@@ -4,7 +4,7 @@ import methodOverride from 'method-override';
 import session from 'express-session';
 import pool from './config/sqlConfig.js';
 
-
+import homeRoutes from './routes/home.routes.js'
 import userRoutes from './routes/user.routes.js';
 import authorRoutes from './routes/author.routes.js';
 import postRoutes from './routes/post.routes.js';
@@ -41,33 +41,7 @@ app.use(session({
 
 // routes
 
-app.get('/', async (req, res) => {
-    console.log("Sesión recibida:", req.session);
-
-    let user = req.session.user;
-
-    console.log(user);
-
-    try {
-        if (user) {
-            user = await User.getById(user.id); // solo obtenemos el usuario sin sus posts ni sus comentarios
-        }   
-
-        const [results] = await pool.query('select * from posts');
-
-        // creamos instancias de la clase Post para cada post obtenido
-
-        const posts = await Promise.all(results.map(row => Post.create(row, {
-            includeUser: true,
-            includeComments: true
-        })));
-
-        res.render('index', {user, posts});
-
-    } catch (error) { 
-        console.log('hubo un error en la operacion sql en la ruta /: ' + error);
-    }
-});
+app.use('/home', homeRoutes)
 
 app.use('/auth', authRoutes);
 
