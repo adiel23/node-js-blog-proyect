@@ -12,7 +12,7 @@ import { Post } from '../models/Post.js';
 
 import { checkRole } from '../middlewares/checkRole.js';
 
-router.get('/new', checkRole(['author, admin']), async (req, res) => {
+router.get('/posts/new', checkRole(['author, admin']), async (req, res) => {
     try {
         const user = await User.create(req.session.user);
         res.render('post-editor', {user, post: undefined});
@@ -21,9 +21,9 @@ router.get('/new', checkRole(['author, admin']), async (req, res) => {
     }
 });
 
-router.get('/matches', controller.getMatchingPosts);
+router.get('/posts/matches', controller.getMatchingPosts);
 
-router.get('/:id/edit', async (req, res) => {
+router.get('/posts/:id/edit', async (req, res) => {
     const postId = req.params.id;
 
     try {
@@ -36,24 +36,22 @@ router.get('/:id/edit', async (req, res) => {
     
 });
 
-router.post('/new', upload.single('img'), controller.createPost);
+router.post('/posts', upload.single('img'), controller.createPost);
 
-router.patch('/:id/update', upload.single('img'), controller.updatePost);
+router.patch('/posts/:id', upload.single('img'), controller.updatePost);
 
-router.get('/:id', controller.getPost);
+router.get('/posts/:id', controller.getPost);
 
-router.delete('/:id', controller.removePost)
+router.delete('/posts/:id', controller.removePost)
 
-router.post('/:id/report', controller.reportPost);
+router.post('/posts/:id/report', controller.reportPost); // aqui la logica esta medio rara ya que esto de crear un reporte deberia de ir dentro de report.controller;
 
-router.post('/:id/update-claps', controller.updateClaps);
+router.post('/posts/:id/update-claps', controller.updateClaps); // aqui hay que revisar tambien
 
-router.post('/:id/comments', controller.addComment);
+router.delete('/posts/:id/comments/:commentId', controller.deleteComment);
 
-router.delete('/:id/comments/:commentId', controller.deleteComment);
+router.patch('/posts/:id/comments/:commentId', controller.updateComment);
 
-router.patch('/:id/comments/:commentId', controller.updateComment);
-
-router.post('/:id/comments/:commentId/likes', controller.updateLikes);
+router.post('/posts/:id/comments/:commentId/likes', controller.updateLikes);
 
 export default router;

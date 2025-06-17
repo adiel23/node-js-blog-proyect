@@ -45,11 +45,11 @@ app.use('/home', homeRoutes)
 
 app.use('/auth', authRoutes);
 
-app.use('/posts', postRoutes);
+app.use('/', postRoutes);
 
 app.use('/users', userRoutes);
 
-app.use('/comments', commentRoutes);
+app.use('/', commentRoutes);
 
 app.use('/authors', authorRoutes);
 

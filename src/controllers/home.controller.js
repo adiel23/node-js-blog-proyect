@@ -19,10 +19,7 @@ export const home = async (req, res) => {
 
         // creamos instancias de la clase Post para cada post obtenido
 
-        let posts = await Promise.all(results.map(row => Post.create(row, {
-            includeUser: true,
-            includeComments: true
-        })));
+        let posts = await Post.getAllPosts({includeUser: true, includeComments: true});
 
         posts = posts.map(post => post.toJSON());
 
