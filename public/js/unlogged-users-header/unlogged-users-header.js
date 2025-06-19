@@ -1,3 +1,5 @@
+import { addAnimationToLoginFormInputs } from "./addAnimationToInputs.js";
+import { handleImgInputChange } from "./registerForm.js";
 import { setupFormsVisibilityBtns } from "./showOrHideForms.js";
 
 // esta parte se encarga de mostrar u ocultar los formularios
@@ -6,47 +8,34 @@ setupFormsVisibilityBtns();
 
 // agregar animacion chingona a todos los input.
 
-const forms = document.querySelectorAll('.login-form');
+// const forms = document.querySelectorAll('.login-form');
 
-const loginForm = forms[0];
+// const loginForm = forms[0];
 
-const inputs = Array.from(loginForm.querySelectorAll('input'));
+// const inputs = Array.from(loginForm.querySelectorAll('input'));
 
-inputs.forEach(input => {
-    input.addEventListener('focus', () => {
-        input.classList.add('active');
-    });
+// inputs.forEach(input => {
+//     input.addEventListener('focus', () => {
+//         input.classList.add('active');
+//     });
 
-    input.addEventListener('blur', () => {
-        input.classList.remove('active');
-    });
-});
+//     input.addEventListener('blur', () => {
+//         input.classList.remove('active');
+//     });
+// });
+
+addAnimationToLoginFormInputs();
 
 // manejo del login
 
+// esto es del register
+
+handleImgInputChange();
+
+// esto es del login
+
 const loginEmailInput = inputs[0];
 const loginPasswordInput = inputs[1];
-
-const imgPreview = document.getElementById('img-preview');
-
-const imgInput = document.getElementById('img-input');
-
-imgInput.addEventListener('change', async (event) => {
-    const file = event.target.files[0]
-    console.log(file);
-
-    let imageUrl;
-
-    const fileReader = new FileReader();
-
-    fileReader.onload = event => {
-        imageUrl = event.target.result;
-        imgPreview.src = imageUrl;
-    };
-
-    fileReader.readAsDataURL(file);
-
-});
 
 const loginBtn = document.getElementById('login-btn');
 
