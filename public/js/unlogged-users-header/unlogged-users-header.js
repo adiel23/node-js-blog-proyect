@@ -1,37 +1,8 @@
-const overlay = document.getElementById('overlay');
+import { setupFormsVisibilityBtns } from "./showOrHideForms.js";
 
-document.getElementById("show-login-form-btn").addEventListener('click', () => {
-    showModal('login-form');
-});
+// esta parte se encarga de mostrar u ocultar los formularios
 
-document.getElementById('close-login-form-btn').addEventListener('click', () => {
-    hideModal('login-form');
-})
-
-document.getElementById('show-register-form-btn').addEventListener('click', () => {
-    showModal('register-form');
-});
-
-document.getElementById('close-register-form-btn').addEventListener('click', () => {
-    hideModal('register-form');
-});
-
-function showModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    modal.style.display = 'flex';
-    overlay.style.display = 'block';
-    document.body.classList.add('no-scroll');
-
-}
-
-function hideModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    modal.style.display = 'none';
-    overlay.style.display = 'none';
-    document.body.classList.remove('no-scroll');
-}
+setupFormsVisibilityBtns();
 
 // agregar animacion chingona a todos los input.
 
@@ -50,6 +21,8 @@ inputs.forEach(input => {
         input.classList.remove('active');
     });
 });
+
+// manejo del login
 
 const loginEmailInput = inputs[0];
 const loginPasswordInput = inputs[1];
