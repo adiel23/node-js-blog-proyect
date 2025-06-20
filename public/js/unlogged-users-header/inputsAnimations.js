@@ -1,5 +1,7 @@
-export function addAnimationToLoginFormInputs() {
-    const inputs = document.getElementById('login-form').querySelectorAll('input');
+// le agrega una animacion a cada uno de los input del formulario de login.
+
+export function addAnimationToLoginFormInputs(formId) {
+    const inputs = document.getElementById(formId).querySelectorAll('input');
 
     inputs.forEach(input => {
         input.addEventListener('focus', () => {

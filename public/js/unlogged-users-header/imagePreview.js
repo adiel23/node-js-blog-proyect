@@ -1,7 +1,7 @@
-export function handleImgInputChange() {
-    const imgPreview = document.getElementById('img-preview');
+export function handleImgInputChange(imagePreviewId, imageInputId) {
+    const imgPreview = document.getElementById(imagePreviewId);
 
-    const imgInput = document.getElementById('img-input');
+    const imgInput = document.getElementById(imageInputId);
 
     imgInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];

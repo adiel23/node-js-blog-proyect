@@ -1,5 +1,5 @@
-export function setupFormsVisibilityBtns() {
-    const overlay = document.getElementById('overlay');
+export function setupFormsVisibilityBtns(overlayId) {
+    const overlay = document.getElementById(overlayId);
 
     const btns = document.querySelectorAll('[data-modal-target][data-modal-action]');
 
