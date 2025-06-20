@@ -4,5 +4,9 @@ export const endpoints = {
     auth: {
         login: '/auth/login',
         register: '/auth/register'
+    },
+    posts: {
+        delete: (id) => `/posts/${id}`,
+        get: (id) => `/posts/${id}`
     }
-}
+};

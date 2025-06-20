@@ -1,53 +1,39 @@
 const userId = document.body.getAttribute('data-user-id');
 
-let userChanges = {};
+// let userChanges = {};
 
-fetch('http://localhost:3000/users/without-posts')
-.then(response => response.json())
-.then(user => {
-    console.log(user);
-})
-.catch(err => {
-    console.error('error al obtener los datos en el fetch a getUserWithoutPosts ' + err);
-});
+// fetch('http://localhost:3000/users/without-posts')
+// .then(response => response.json())
+// .then(user => {
+//     console.log(user);
+// })
+// .catch(err => {
+//     console.error('error al obtener los datos en el fetch a getUserWithoutPosts ' + err);
+// });
 
 const postsContainer = document.getElementById('posts-container');
 
-postsContainer.addEventListener('click', (event) => {
+postsContainer.addEventListener('click', async (event) => {
     const element = event.target;
 
     if (element.classList.contains('remove-post-btn')) {
 
         const postId = element.getAttribute('data-post-id');
 
-        (async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/posts/${postId}`, {
-                    method: 'DELETE'
-                });
+        const renderedHTML = await deletePost(postId);
 
-                if (response.ok) {
-                    const renderedHTML = await response.text();
-
-                    updatePostsContainer(renderedHTML);
-                    return;
-                };
-
-                console.log('error en la respuesta del server');
-            } catch (err) {
-                console.log('error en la funcion asincrona autoejecutable al dar clic en el remove post btn ' + err)
-            }
-        })();
+        updatePostsContainer(renderedHTML);
 
     } else if (element.classList.contains('post-dropdown-toggler')) {
         const postDropdown = element.nextElementSibling;
 
-        postDropdown.classList.toggle('active');
+        toggleDropdown(postDropdown);
 
     } else if (!element.classList.contains('edit-post-btn')) {
         const postContainer = element.closest('.post-container');
         const postId = postContainer.getAttribute('data-post-id');
-        window.location.href = `/posts/${postId}`;
+
+        redirectToPost(postId);
     }
 
 });
