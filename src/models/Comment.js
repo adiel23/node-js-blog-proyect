@@ -7,7 +7,7 @@ export class Comment {
         this.postId = postId;
         this.content = content;
         this.likes = likes;
-        this.date = new Date(date).toISOString().split('T')[0]; // arreglar esto
+        this.date = date ? new Date(date).toISOString().split('T')[0] : null; // arreglar esto
 
         if (user) {
             this.user = user;
@@ -30,7 +30,7 @@ export class Comment {
     }
 
     async insert() {
-        const [results] = await pool.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [this.postId, this.userId, content]);
+        const [results] = await pool.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [this.postId, this.userId, this.content]);
     }
 
     // async updateLikes() {
@@ -52,7 +52,7 @@ export class Comment {
     }
 
     static async getById(id, options = {}) {
-            const [results] = await pool.query('select * from comments where commentId = ?', [id]);
+            const [results] = await pool.query('select * from comments where id = ?', [id]);
 
             if (results.length === 0) return null;
 

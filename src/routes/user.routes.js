@@ -4,7 +4,7 @@ import * as controller from '../controllers/users.controller.js';
 import upload from '../config/multerConfig.js';
 import { User } from '../models/User.js';
 
-router.get('/get-user', controller.getUser);
+router.get('/', controller.getUser);
 
 router.get('/profile', async (req, res) => {
     const userId = req.session.user.id;
@@ -22,7 +22,7 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-router.patch('/:id/update-profile', upload.single('imagePath'), controller.updateProfile)
+router.patch('/:id', upload.single('imagePath'), controller.updateProfile)
 
 router.get('/without-posts', async (req, res) => {
     const userId = req.session.user.id;

@@ -12,17 +12,8 @@ export const toggleCommentLike = async (req, res) => {
 
         // lo segundo que haremos sera hacer el update.
 
-        if (like) { // en caso de que ya se le haya dado like
+        if (!like) { // en caso de que no se le haya dado like
 
-            await like.delete()
-
-            await comment.removeLike();
-
-            const likes = comment.getLikes();
-
-            res.status(200).send({likes, liked: false});
-                
-        } else { // en caso de que no se le haya dado like
             const newLike = await Like.create({userId, commentId});
 
             await newLike.insert();
@@ -31,11 +22,19 @@ export const toggleCommentLike = async (req, res) => {
                 
             const likes = await comment.getLikes();
 
-            res.status(200).send({likes, liked: true});
-        }
+            return res.status(200).json({likes, liked: true});
+        } 
+
+        await like.delete();
+
+        await comment.removeLike();
+
+        const likes = await comment.getLikes();
+
+        return res.status(200).json({likes, liked: false});
         
     } catch (err) {
-        console.log('error en el controlador update likes ' + err);
+        console.log('error en el controlador toggleCommentLike: ', err);
         res.status(500).send({succes: false, error: 'error al actualizar los likes'});
     };
 };

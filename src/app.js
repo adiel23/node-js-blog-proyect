@@ -9,6 +9,7 @@ import userRoutes from './routes/user.routes.js';
 import authorRoutes from './routes/author.routes.js';
 import postRoutes from './routes/post.routes.js';
 import commentRoutes from './routes/comment.routes.js';
+import likeRoutes from './routes/like.routes.js';
 import authRoutes from './routes/auth.routes.js';
 
 import { fileURLToPath } from 'url';
@@ -50,6 +51,8 @@ app.use('/', postRoutes);
 app.use('/users', userRoutes);
 
 app.use('/', commentRoutes);
+
+app.use('/', likeRoutes)
 
 app.use('/authors', authorRoutes);
 

@@ -148,10 +148,10 @@
     <div id="report-post-modal-overlay"></div>
 
     <% if (user) { %>
-        <script src="/js/header.js"></script>
+        <script src="/js/header/header.js" type="module"></script>
     <% } else { %>
         <%- include('./_login-forms.ejs') %>
-        <script src="/js/unlogged-users-header.js"></script>
+        <script src="/js/unlogged-users-header/unlogged-users-header.js" type="module"></script>
     <% } %>
 
     <script src="/js/author-profile.js" type="module"></script>
