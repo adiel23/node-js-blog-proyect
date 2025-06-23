@@ -2,8 +2,9 @@ import pool from "../config/sqlConfig.js";
 import { User } from "./User.js";
 
 export class Comment {
-    constructor({id, userId, user, content, likes, date}) {
+    constructor({id, postId, userId, user, content, likes, date}) {
         this.id = id;
+        this.postId = postId;
         this.content = content;
         this.likes = likes;
         this.date = new Date(date).toISOString().split('T')[0]; // arreglar esto
@@ -29,15 +30,15 @@ export class Comment {
     }
 
     async insert() {
-
+        const [results] = await pool.query('insert into comments (postId, userId, content, date) VALUES (?, ?, ?, CURDATE())', [this.postId, this.userId, content]);
     }
 
-    async updateLikes() {
-        return await pool.query('update comments set likes = likes - 1 where id = ?', [this.id]);
-    }
+    // async updateLikes() {
+    //     return await pool.query('update comments set likes = likes - 1 where id = ?', [this.id]);
+    // }
 
     async addLike() {
-
+        return await pool.query('update comments set likes = likes + 1 where id = ?', [this.id]);
     }
 
     async removeLike() {
@@ -60,6 +61,17 @@ export class Comment {
 
     getContent() {
         return this.content.replace(/\n/g, '<br>');
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            content: this.content,
+            likes: this.likes,
+            date: this.date,
+            user: this.user ? this.user.toJSON() : null,
+            userId: this.user ? null : this.userId
+        }
     }
 
 }

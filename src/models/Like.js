@@ -50,4 +50,12 @@ export class Like {
         return new Like(data);
     }
 
-}
+    toJSON() {
+        return {
+            id: this.id,
+            userId: this.userId,
+            commentId: this.commentId
+        }
+    }
+
+};

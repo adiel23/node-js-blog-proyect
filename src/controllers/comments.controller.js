@@ -2,6 +2,7 @@ import pool from '../config/sqlConfig.js';
 import { Comment } from '../models/Comment.js';
 import { Like } from '../models/Like.js';
 import { User } from '../models/User.js';
+import { Post } from '../models/Post.js';
 
 export const updateLikes = async (req, res) => {
     const {commentId, userId} = req.body;
@@ -30,11 +31,9 @@ export const updateLikes = async (req, res) => {
 
             await newLike.insert();
 
-            const [updateResult] = await pool.query('update comments set likes = likes + 1 where id = ?', [commentId]);
-
-            const [selectResults] = await pool.query('select likes from comments where id = ?', [commentId]);
+            await comment.addLike();
                 
-            const likes = selectResults[0].likes;
+            const likes = await comment.getLikes();
 
             res.status(200).send({likes, liked: true});
         }
@@ -44,3 +43,82 @@ export const updateLikes = async (req, res) => {
         res.status(500).send({succes: false, error: 'error al actualizar los likes'});
     };
 };
+
+export const createComment = async (req, res) => {
+    const postId = req.params.id;
+    const content = req.body.content;
+
+    try {
+        const user = await User.create(req.session.user);
+
+        const comment = await Comment.create({postId, content});
+
+        await comment.insert();
+
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
+
+        for (const comment of post.comments) {
+            comment.hasLiked = await user.hasLikedComment(comment.id);
+        }
+
+        res.render('_comments', {post, user});
+    } catch (err) {
+        console.log('error en la funcion add Comment ' + err);
+    }
+};
+
+export const deleteComment = async (req, res) => {
+    let user = req.session.user;
+
+    const postId = parseInt(req.params.id);
+
+    const commentId = parseInt(req.params.commentId);
+
+    if (!user) return res.redirect('/');
+
+    try {
+        user = await User.create(user);
+
+        const [results] = await pool.query(`
+                delete from comment_likes where commentId = ?;
+
+                delete from comments where id = ?;
+            `, [commentId, commentId]);
+
+        console.log(results);
+
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
+
+        res.render('_comments', {post, user});
+
+    } catch (err) {
+        console.log('error en la funcion delete comment: ' + err);
+    }
+}
+
+export const updateComment = async (req, res) => {
+    let user = req.session.user;
+    const postId = parseInt(req.params.id);
+    const commentId = parseInt(req.params.commentId);
+    const newContent = req.body.content;
+
+    if (!user) return res.redirect('/');
+
+    try {
+
+        user = await User.create(user);
+
+        await pool.query('update comments set content = ? where id = ?', [newContent, commentId]);
+
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
+
+        for (const comment of post.comments) {
+            comment.hasLiked = await user.hasLikedComment(comment.id);
+        }
+
+        res.render('_comments', {post, user})
+
+    } catch (err) {
+        console.log('hubo un error en el controlador update comment: ' + err);
+    }
+}

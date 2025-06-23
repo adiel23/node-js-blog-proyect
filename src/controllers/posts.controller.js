@@ -1,8 +1,7 @@
 import pool from '../config/sqlConfig.js';
-
-import {getCompletePost, getUserWithPosts, getUser} from '../modules/clases.js';
-
+import { Clap } from '../models/Clap.js';
 import { Post } from '../models/Post.js';
+import { Report } from '../models/Report.js';
 import { User } from '../models/User.js';
 
 // import { Post } from '../models/Post.js';
@@ -69,7 +68,7 @@ export const getPost = async (req, res) => {
         }
        
     } catch (error) {
-        console.log('hubo un error al obtener el post con comentarios ' + error);
+        console.log('hubo un error al obtener el post con comentarios ', error);
     }
 }
 
@@ -80,13 +79,9 @@ export const getMatchingPosts = async (req, res) => {
     try {
         const user = req.session.user ? await User.getById(req.session.user.id) : null;
 
-        const [results] = await pool.query(`select * from posts where title LIKE ?`, [search]);
+        const matchingPosts = await Post.getPostsByTitle(search);
 
-        const posts = await Promise.all(results.map(row => Post.create(row) ) );
-
-        console.log(posts);
-
-        res.render('search-results', {user, posts, query});
+        res.render('search-results', {user, matchingPosts, query});
 
     } catch (err) {
         console.log('error en el controlador getMatchingPosts');
@@ -110,7 +105,7 @@ export const removePost = async (req, res) => {
         res.render('my-posts', {posts: user.posts});
 
     } catch (err) {
-        console.log('error en el controlador removePost ' + err);
+        console.log('error en el controlador removePost ', err);
     }
 }
 
@@ -123,26 +118,11 @@ export const updatePost = async (req, res) => {
     const file = req.file;
 
     try {
+        const post = await Post.getById(postId);
 
-        if (file == undefined) {
-            const [results] = await pool.query('update posts set title = ?, content = ? where id = ?',
-                [postId, title, content]
-            );
+        await post.update(title, content, file);
 
-            console.log('resultado de hacer el update al post: ', results);
-        
-        } else {
-            const imagePath = `/uploads/${file.filename}`;
-
-            const [results] = await pool.query('update posts set title = ?, content = ?, imagePath = ? where id = ?', 
-                [postId, title, content, imagePath]
-            );
-
-            console.log('resultado de hacer el update al post: ', results);
-
-        }
-
-        res.redirect(`/post/${postId}`);
+        res.redirect(`/posts/${postId}`);
 
     } catch (err) {
         console.log('error en el try del controlador update post ' + err);
@@ -154,24 +134,20 @@ export const updateClaps = (req, res) => {
 
     (async () => {
         try {
-            const [insertResults] = await pool.query('insert into post_claps (postId, userId) values (?, ?)', [postId, userId]);
+            const post = await Post.getById(postId);
 
-            console.log('resultados del insert ' + insertResults);
+            const clap = await Clap.create({postId, userId});
 
-            const [updateResults] = await pool.query('update posts set claps = claps + 1 where id = ?', [postId]);
+            await clap.insert();
 
-            console.log('resultados del update ' + updateResults);
-
-            const [updatedPostRows] = await pool.query('SELECT * FROM posts WHERE id = ?', [postId]);
-
-            const updatedPost = updatedPostRows[0];
+            await post.addClap();
             
-            const claps = updatedPost.claps;
+            const claps = post.claps;
 
             res.status(200).send({claps});
 
         } catch (err) {
-            console.log('hubo un error al hacer las consultas de los post_claps: ' + err);
+            console.log('error en el controlador updateClaps en post.controllers: ', err);
         }
     })();
 }
@@ -179,18 +155,17 @@ export const updateClaps = (req, res) => {
 export const reportPost = async (req, res) => {
     const userId = req.session.user.id;
     const postId = parseInt(req.params.id);
-
-    const reportReason = req.body.reportReason;
+    const reason = req.body.reportReason;
 
     try {
-        const insertResult = await pool.query('insert into reports (userId, postId, reason, date) values (?, ?, ?, curdate())', [userId, postId, reportReason]);
+        const report = await Report.create({userId, postId, reason});
 
-        console.log(`resultado de crear un nuevo reporte de un post ${insertResult}`);
+        await report.insert();
 
         res.status(200).json({message: 'exito'});
 
     } catch (err) {
-        console.log(`eror en el controlador reportPost ${err}`);
+        console.log(`eror en el controlador reportPost: `, err);
     }
 }
 
@@ -264,7 +239,7 @@ export const updateComment = async (req, res) => {
 
         await pool.query('update comments set content = ? where id = ?', [newContent, commentId]);
 
-        const post = await await Post.getById(postId, {includeUser: true, includeComments: true});
+        const post = await Post.getById(postId, {includeUser: true, includeComments: true});
 
         for (const comment of post.comments) {
             comment.hasLiked = await user.hasLikedComment(comment.id);
@@ -276,50 +251,4 @@ export const updateComment = async (req, res) => {
         console.log('hubo un error en el controlador update comment: ' + err);
     }
 }
-
-export const updateLikes = async (req, res) => {
-    const {commentId, userId} = req.body;
-
-    try {
-        const [results] = await pool.query('select * from comment_likes where commentId = ? and userId = ?', [commentId, userId]);
-
-        console.log('likes: ', results);
-
-        // lo segundo que haremos sera hacer el update.
-
-        if (results.length > 0) { // en caso de que ya se le haya dado like
-            const likeId = results[0].id;
-
-            const [deleteResults] = await pool.query('delete from comment_likes where id = ?', [likeId]);
-
-            console.log(deleteResults);
-
-            const [updateResults] = await pool.query('update comments set likes = likes - 1 where id = ?', [commentId]);
-
-            const [selectResults] = await pool.query('select likes from comments where id = ?', [commentId]);
-
-            const likes = selectResults[0].likes;
-
-            res.status(200).send({likes, liked: false});
-                
-        } else { // en caso de que no se le haya dado like
-            const [insertResults] = await pool.query('insert into comment_likes (commentId, userId) values (?, ?)', [commentId, userId])
-
-            console.log(insertResults);
-
-            const [updateResult] = await pool.query('update comments set likes = likes + 1 where id = ?', [commentId]);
-
-            const [selectResults] = await pool.query('select likes from comments where id = ?', [commentId]);
-                
-            const likes = selectResults[0].likes;
-
-            res.status(200).send({likes, liked: true});
-        }
-        
-    } catch (err) {
-        console.log('error en el controlador update likes ' + err);
-        res.status(500).send({succes: false, error: 'error al actualizar los likes'});
-    };
-};
-
 

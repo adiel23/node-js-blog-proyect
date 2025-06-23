@@ -1,5 +1,5 @@
 <header class="<%= viewname %>">
-    <h2>THE BLOG</h2>
+    <h2>THE BLOG </h2>
     <div id="header-options">
         <div id="search-container">
             <i class="fa-solid fa-magnifying-glass" id="search-icon"></i>
@@ -14,9 +14,11 @@
                     <img src="<%= user.imagePath %>" alt="">
                     <h3> <%= user.name %></h3>
                 </div>
-                <div class="dropdown-section">
-                    <a href="/posts/new">Write</a>
-                </div>
+                <% if (['admin', 'author'].includes(user.role)) { %>
+                    <div class="dropdown-section">
+                        <a href="/posts/new">Write</a>
+                    </div>
+                <% } %>
                 <div class="dropdown-section">
                     <a href="/users/profile">Profile</a>
                 </div>
@@ -24,7 +26,7 @@
                     <a href="">Settings</a>
                 </div>
                 <div class="dropdown-section">
-                    <a href="/users/log-out" id="log-out-link">Log out</a>
+                    <a href="/auth/log-out" id="log-out-link">Log out</a>
                 </div>
             </div>
         </div>

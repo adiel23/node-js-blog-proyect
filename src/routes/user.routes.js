@@ -6,28 +6,6 @@ import { User } from '../models/User.js';
 
 router.get('/get-user', controller.getUser);
 
-router.get('/register', (req, res) => {
-    res.render('register');
-});
-
-router.post('/register', upload.single('img'), controller.register);
-
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-router.post('/login', controller.login);
-
-router.get('/log-out', (req, res) => {
-    req.session.destroy(function(err) {
-        if (err) {
-            console.log('error al destruir la sesion ' + err);
-            return;
-        }
-        res.redirect('/');
-    })
-});
-
 router.get('/profile', async (req, res) => {
     const userId = req.session.user.id;
 

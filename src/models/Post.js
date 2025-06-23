@@ -56,10 +56,29 @@ export class Post {
         return comments;
     }
 
+    async addClap() {
+        const [results] = await pool.query('update posts set claps = claps + 1 where id = ?', [this.id]);
+        this.claps++;
+        return results;
+    }
+
     async delete() {
         const [results] = await pool.query('delete from users where id = ?', [this.id]);
 
         return results;
+    }
+
+    async update(newTitle, newContent, file = undefined) {
+        if (!file) {
+            return await pool.query('update posts set title = ?, content = ? where id = ?', [this.id, newTitle, newContent]);
+        } 
+
+        const newImagePath = `/uploads/${file.filename}`;
+
+        return await pool.query('update posts set title = ?, content = ?, imagePath = ? where id = ?', 
+            [this.id, newTitle, newContent, newImagePath]
+        );
+        
     }
 
     static async getById(id, options = {}) {
@@ -68,7 +87,33 @@ export class Post {
         return await Post.create(results[0], options);
     }
 
+    static async getAllPosts(options = {}) {
+        const [results] = await pool.query('select * from posts');
+
+        return await Promise.all(results.map(row => Post.create(row, options)));
+    }
+
+    static async getPostsByTitle(title, options = {}) {
+        const [results] = await pool.query(`select * from posts where title LIKE ?`, [title]);
+
+        return await Promise.all(results.map(row => Post.create(row, options)));
+    }
+
     getCommentsNumber() {
         return this.comments.length;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            user: this.user ? this.user.toJSON() : null,
+            userId: this.user? null : this.userId,
+            title: this.title,
+            content: this.content,
+            imagePath: this.imagePath,
+            date: this.date,
+            claps: this.claps,
+            comments: this.comments.map(comment => comment.toJSON())
+        }
     }
 }

@@ -85,7 +85,7 @@ loginBtn.addEventListener('click', async (e) => {
     if (loginEmailInput.value == '' || loginPasswordInput.value == '') {
         loginErrorMessage.textContent = 'Completa todos los campos';
     } else {
-        const response = await fetch(`http://localhost:3000/users/login`, {
+        const response = await fetch(`http://localhost:3000/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ loginBtn.addEventListener('click', async (e) => {
         });
 
         if (response.ok) {
-            window.location.href = '/'
+            window.location.href = '/home/'
         } else {
             const parsedResponse = await response.json();
             

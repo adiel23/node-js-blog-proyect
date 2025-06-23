@@ -24,7 +24,9 @@ export class User {
     }
 
     static async findByCredentials(email, password) {
-        const [results] = await pool.query('select * from users where email = ? and password = ?', [email, password]);
+        const [results] = await pool.query('select u.*, r.name as role from users u inner join roles r on u.roleId = r.id where email = ? and password = ?', [email, password]);
+
+        console.log('user: ', results[0]);
 
         if (results.length === 0) return null;
 
@@ -62,8 +64,6 @@ export class User {
     static async getById(id, options = {}) {
         const [results] = await pool.query('select * from users where id = ?', [id]);
 
-        console.log(`resultados de obtener el usuario por id: `, results);
-
         if (results.length === 0) return null; 
 
         return await User.create(results[0], options);
@@ -92,4 +92,16 @@ export class User {
         return posts;
         
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            role: this.role,
+            imagePath: this.imagePath,
+            bio: this.bio
+        }
+    }
+    
 }
