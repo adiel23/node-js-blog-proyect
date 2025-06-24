@@ -52,6 +52,6 @@ router.delete('/posts/:id/comments/:commentId', controller.deleteComment);
 
 router.patch('/posts/:id/comments/:commentId', controller.updateComment);
 
-router.post('/posts/:id/comments/:commentId/likes', controller.updateLikes);
+// router.post('/posts/:id/comments/:commentId/likes', controller.updateLikes);
 
 export default router;
