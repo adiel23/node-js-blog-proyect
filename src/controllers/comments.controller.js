@@ -4,54 +4,55 @@ import { Like } from '../models/Like.js';
 import { User } from '../models/User.js';
 import { Post } from '../models/Post.js';
 
-export const updateLikes = async (req, res) => {
-    const {commentId, userId} = req.body;
+// export const updateLikes = async (req, res) => {
+//     const {commentId, userId} = req.body;
 
-    try {
-        const user = await User.getById(userId);
+//     try {
+//         const user = await User.getById(userId);
 
-        const comment = await Comment.getById(commentId);
+//         const comment = await Comment.getById(commentId);
 
-        const like = await Like.findByUserIdAndCommentId(userId, commentId);
+//         const like = await Like.findByUserIdAndCommentId(userId, commentId);
 
-        // lo segundo que haremos sera hacer el update.
+//         // lo segundo que haremos sera hacer el update.
 
-        if (like) { // en caso de que ya se le haya dado like
+//         if (like) { // en caso de que ya se le haya dado like
 
-            await like.delete()
+//             await like.delete()
 
-            await comment.removeLike();
+//             await comment.removeLike();
 
-            const likes = comment.getLikes();
+//             const likes = comment.getLikes();
 
-            res.status(200).send({likes, liked: false});
+//             res.status(200).send({likes, liked: false});
                 
-        } else { // en caso de que no se le haya dado like
-            const newLike = await Like.create({userId, commentId});
+//         } else { // en caso de que no se le haya dado like
+//             const newLike = await Like.create({userId, commentId});
 
-            await newLike.insert();
+//             await newLike.insert();
 
-            await comment.addLike();
+//             await comment.addLike();
                 
-            const likes = await comment.getLikes();
+//             const likes = await comment.getLikes();
 
-            res.status(200).send({likes, liked: true});
-        }
+//             res.status(200).send({likes, liked: true});
+//         }
         
-    } catch (err) {
-        console.log('error en el controlador update likes ' + err);
-        res.status(500).send({succes: false, error: 'error al actualizar los likes'});
-    };
-};
+//     } catch (err) {
+//         console.log('error en el controlador update likes ' + err);
+//         res.status(500).send({succes: false, error: 'error al actualizar los likes'});
+//     };
+// };
 
 export const createComment = async (req, res) => {
+    const userId = req.session.user.id;
     const postId = req.params.id;
     const content = req.body.content;
 
     try {
         const user = await User.create(req.session.user);
 
-        const comment = await Comment.create({postId, content});
+        const comment = await Comment.create({userId, postId, content});
 
         await comment.insert();
 
@@ -63,7 +64,7 @@ export const createComment = async (req, res) => {
 
         res.render('_comments', {post, user});
     } catch (err) {
-        console.log('error en la funcion add Comment ' + err);
+        console.log('error en el controlador createComment: ', err);
     }
 };
 
