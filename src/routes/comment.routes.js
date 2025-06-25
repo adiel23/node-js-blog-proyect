@@ -8,4 +8,6 @@ import * as controller from '../controllers/comments.controller.js';
 
 router.post('/posts/:id/comments', controller.createComment);
 
+router.delete('/posts/:postId/comments/:commentId', controller.deleteComment);
+
 export default router;

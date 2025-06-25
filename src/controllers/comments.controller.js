@@ -71,29 +71,25 @@ export const createComment = async (req, res) => {
 export const deleteComment = async (req, res) => {
     let user = req.session.user;
 
-    const postId = parseInt(req.params.id);
+    const postId = parseInt(req.params.postId);
 
     const commentId = parseInt(req.params.commentId);
 
-    if (!user) return res.redirect('/');
+    if (!user) return res.redirect('/home');
 
     try {
         user = await User.create(user);
 
-        const [results] = await pool.query(`
-                delete from comment_likes where commentId = ?;
+        const comment = await Comment.getById(commentId);
 
-                delete from comments where id = ?;
-            `, [commentId, commentId]);
-
-        console.log(results);
+        await comment.delete();
 
         const post = await Post.getById(postId, {includeUser: true, includeComments: true});
 
         res.render('_comments', {post, user});
 
     } catch (err) {
-        console.log('error en la funcion delete comment: ' + err);
+        console.log('error en el controlador deleteComment: ', err);
     }
 }
 

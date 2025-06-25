@@ -51,6 +51,32 @@ export class Comment {
         return results[0].likes;
     }
 
+    async delete () {
+        const conn = pool.getConnection();
+
+        try {
+            (await conn).beginTransaction();
+
+            const [likesDeletionResults] = await pool.query('delete from comment_likes where commentId = ?', [this.id]);
+
+            const [commentDeletionResults] = await pool.query('delete from comments where id = ?', [this.id]);
+
+            (await conn).commit();
+
+            return {
+                commentDeletionResults,
+                likesDeletionResults
+            }
+        } catch (err) {
+            (await conn).rollback();
+            console.log('error en el metodo de instancia delete de la clase Comment: ', err);
+            throw err;
+        } finally {
+            (await conn).release();
+        }
+        
+    }
+
     static async getById(id, options = {}) {
             const [results] = await pool.query('select * from comments where id = ?', [id]);
 
