@@ -48,7 +48,7 @@ router.post('/posts/:id/report', controller.reportPost); // aqui la logica esta 
 
 router.post('/posts/:id/update-claps', controller.updateClaps); // aqui hay que revisar tambien
 
-router.delete('/posts/:id/comments/:commentId', controller.deleteComment);
+// router.delete('/posts/:id/comments/:commentId', controller.deleteComment);
 
 router.patch('/posts/:id/comments/:commentId', controller.updateComment);
 
