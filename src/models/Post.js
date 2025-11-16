@@ -63,14 +63,14 @@ export class Post {
     }
 
     async delete() {
-        const [results] = await pool.query('delete from users where id = ?', [this.id]);
+        const [results] = await pool.query('delete from posts where id = ?', [this.id]);
 
         return results;
     }
 
     async update(newTitle, newContent, file = undefined) {
         if (!file) {
-            return await pool.query('update posts set title = ?, content = ? where id = ?', [this.id, newTitle, newContent]);
+            return await pool.query('update posts set title = ?, content = ? where id = ?', [newTitle, newContent, this.id]);
         } 
 
         const newImagePath = `/uploads/${file.filename}`;

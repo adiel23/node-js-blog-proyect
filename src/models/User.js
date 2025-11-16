@@ -62,7 +62,19 @@ export class User {
     }
 
     static async getById(id, options = {}) {
-        const [results] = await pool.query('select * from users where id = ?', [id]);
+        const [results] = await pool.query(`
+            select
+            u.id,
+            u.name,
+            u.email,
+            u.password,
+            r.name as role,
+            u.imagePath,
+            u.bio
+            from users u
+            join roles r
+            on r.id = u.roleId
+            where u.id = ?`, [id]);
 
         if (results.length === 0) return null; 
 

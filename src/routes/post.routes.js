@@ -12,7 +12,7 @@ import { Post } from '../models/Post.js';
 
 import { checkRole } from '../middlewares/checkRole.js';
 
-router.get('/posts/new', checkRole(['author, admin']), async (req, res) => {
+router.get('/posts/new', checkRole(['author', 'admin']), async (req, res) => {
     try {
         const user = await User.create(req.session.user);
         res.render('post-editor', {user, post: undefined});
